@@ -412,6 +412,11 @@
               <FileType>5</FileType>
               <FilePath>.\delay.h</FilePath>
             </File>
+            <File>
+              <FileName>LPC177x_8x.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\LPC177x_8x.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
