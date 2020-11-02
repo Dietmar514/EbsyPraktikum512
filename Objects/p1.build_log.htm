@@ -5,10 +5,10 @@
 <h2>Tool Versions:</h2>
 IDE-Version: µVision V5.29.0.0
 Copyright (C) 2019 ARM Ltd and ARM Germany GmbH. All rights reserved.
-License Information: Ringo Der Dingo, Rübenfactory (Andora), LIC=----
+License Information: Udo Schader, Hochschule Coburg, LIC=IC9QC-R8Z05-5F5M7-C0999-VUYX7-SR4RF
  
 Tool Versions:
-Toolchain:       MDK-Lite  Version: 5.29.0.0
+Toolchain:       MDK-ARM Professional  Version: 5.29.0.0
 Toolchain Path:  C:\Keil_v5\ARM\ARMCC\Bin
 C Compiler:      Armcc.exe V5.06 update 6 (build 750)
 Assembler:       Armasm.exe V5.06 update 6 (build 750)
@@ -21,39 +21,24 @@ Target DLL:      UL2CM3.DLL V1.163.0.0
 Dialog DLL:      TARMP1.DLL V1.26.0.0
  
 <h2>Project:</h2>
-C:\Users\Stephan Wachter\Documents\Studium\EbsyPraktikum512\p1.uvprojx
-Project File Date:  10/31/2020
+C:\Users\ben6642s\Desktop\Neuer Ordner\Basisprojekt\Basisprojekt\p1.uvproj
+Project File Date:  11/02/2020
 
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 6 (build 750)', folder: 'C:\Keil_v5\ARM\ARMCC\Bin'
-Build target 'Target 1'
-compiling system_LPC177x_8x.c...
-core_cm3.h(121): error:  #5: cannot open source input file "core_cmInstr.h": No such file or directory
-  #include <core_cmInstr.h>                /* Core Instruction Access                         */
-system_LPC177x_8x.c: 0 warnings, 1 error
+Rebuild target 'Target 1'
+assembling startup_LPC177x_8x.s...
+assembling delay.s...
+compiling core_cm3.c...
 compiling main.c...
-main.c(2): error:  #5: cannot open source input file "LPC177x_8x.h": No such file or directory
-  #include <LPC177x_8x.h>
-main.c: 0 warnings, 1 error
-".\Objects\p1.axf" - 2 Error(s), 0 Warning(s).
-
-<h2>Software Packages used:</h2>
-
-Package Vendor: ARM
-                http://www.keil.com/pack/ARM.CMSIS.5.6.0.pack
-                ARM.CMSIS.5.6.0
-                CMSIS (Cortex Microcontroller Software Interface Standard)
-   * Component: CORE Version: 5.3.0
-
-<h2>Collection of Component include folders:</h2>
-  .\RTE\_Target_1
-  C:\Users\Stephan Wachter\AppData\Local\Arm\Packs\ARM\CMSIS\5.6.0\CMSIS\Core\Include
-
-<h2>Collection of Component Files used:</h2>
-
-   * Component: ARM::CMSIS:CORE:5.3.0
-Target not created.
-Build Time Elapsed:  00:00:00
+main.c(178): warning:  #144-D: a value of type "void (*)()" cannot be used to initialize an entity of type "void (*)(int)"
+  void (*tasklist[processCount])(int) = { controllLed1, controllLed2, controllLed3, controllLed4, controllLed5, controllLed6, controllLed7, controllLed8,  verschmiertesLauflicht};
+main.c: 1 warning, 0 errors
+compiling system_LPC177x_8x.c...
+linking...
+Program Size: Code=1256 RO-data=260 RW-data=48 ZI-data=1664  
+".\Objects\p1.axf" - 0 Error(s), 1 Warning(s).
+Build Time Elapsed:  00:00:01
 </pre>
 </body>
 </html>

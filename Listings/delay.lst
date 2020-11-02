@@ -100,10 +100,9 @@ ARM Macro Assembler    Page 2
    60 00000020                 ENDFUNC                      ; end of function
    61 00000020                 END
 Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M3 --apcs=interw
-ork --depend=.\objects\delay.d -o.\objects\delay.o -I.\RTE\_Target_1 -I"C:\User
-s\Stephan Wachter\AppData\Local\Arm\Packs\ARM\CMSIS\5.6.0\CMSIS\Core\Include" -
-IDevice\Include --predefine="__EVAL SETA 1" --predefine="__UVISION_VERSION SETA
- 529" --predefine="_RTE_ SETA 1" --list=.\listings\delay.lst delay.s
+ork --depend=.\objects\delay.d -o.\objects\delay.o -IC:\Keil_v5\ARM\RV31\INC -I
+C:\Keil_v5\ARM\CMSIS\Include -IC:\Keil_v5\ARM\INC\NXP\LPC177x_8x --predefine="_
+_UVISION_VERSION SETA 529" --list=.\listings\delay.lst delay.s
 
 
 
@@ -143,4 +142,4 @@ Symbol: delayms
       At line 37 in file delay.s
 Comment: delayms used once
 4 symbols
-337 symbols in table
+335 symbols in table
