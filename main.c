@@ -6,7 +6,7 @@ typedef uint32_t pid_t
 typedef uint32_t result_t
 
 #define PROCESS_COUNT 9
-#define RUNNING_LIGHT_POS 16
+#define RUNNING_LIGHT_POS 16 //TO DO: Check this
 #define MAX_TICKS 500
 #define MAX_PROCESSES 1000
 
@@ -40,7 +40,7 @@ struct s_process{
 	void* task;
 	pid_t pid;
 	e_status status;
-}s_process;
+}s_process; //TO DO: Check this
 
 
 
@@ -307,6 +307,7 @@ void (*tasklist[PROCESS_COUNT])(int) = {controll_led0, controll_led1, controll_l
 int main(void){
 
 	//TO DO: Check if value of RUNNING_LIGHT_POS is correct
+	//TO DO: Check struct s_process
 
 	init();
 	while(1){
