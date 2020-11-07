@@ -222,16 +222,13 @@ pid_t create(void* function){
 }
 
 result_t destroy(pid_t pid){
-    if(ProcessTable[pid].status == ready){      //should not happens, but could happens
-        ProcessTable[pid].status = zombie;
+    if(ProcessTable[pid].status == ready){      //should not happen
         return 1;
     }
         if(ProcessTable[pid].status == blocked){
-        ProcessTable[pid].status = zombie;
         return 2;
     }
-    if(ProcessTable[pid].status == running){    //process still running!
-        ProcessTable[pid].status = zombie;
+    if(ProcessTable[pid].status == running){    //should not happen, process still running!
         return 3;
     }
     if(ProcessTable[pid].status == terminated){
