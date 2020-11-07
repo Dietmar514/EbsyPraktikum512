@@ -319,6 +319,7 @@ int main(void){
 		//run all ready processes
 		for (int pid = 0; pid < MAX_PROCESSES; pid++){                      
             if(process_table[pid]){  
+		
 				 //alway check if process_table[pid] is NULL!                                      
 			    if(process_table[pid].status == ready){
 					//run process
