@@ -146,13 +146,16 @@ void smeared_running_light(){
 	static uint32_t b_is_initialized;
 	uint32_t b_init = 0;
 
-	if(!b_init){																//start with LED 0															
+	//start with LED 0	
+	if(!b_init){																														
 		led_counter = 0;
 		b_is_initialized = 0;
 	}
 
 	if(b_init){
-		if(tick_counter == 0){													//trigger of led_counter to enable the next LED of the running light
+		
+		//trigger of led_counter to enable the next LED of the running light
+		if(tick_counter == 0){													
 			led_counter++;
 			}
 	}
@@ -315,25 +318,33 @@ int main(void){
 
 		//run all ready processes
 		for (int pid = 0; pid < MAX_PROCESSES; pid++){                      
-            if(process_table[pid]){                                         //Alway check if process_table[pid] is NULL!
+            if(process_table[pid]){  
+				 //alway check if process_table[pid] is NULL!                                      
 			    if(process_table[pid].status == ready){
-				    (*process_table[currTask])();							//run process
-				    process_table[currTask].status = terminated;			//set status to terminated after running
+					//run process
+				    (*process_table[currTask])();
+					//set status to terminated after running							
+				    process_table[currTask].status = terminated;			
 			    }		
 	    	}
         }
 
 		//destroy all terminated processes
-        for (int pid = 0; pid < MAX_PROCESSES; pid++){						
-            if(process_table[pid]){											//Alway check if process_table[pid] is NULL!
+        for (int pid = 0; pid < MAX_PROCESSES; pid++){	
+
+			//alway check if process_table[pid] is NULL!					
+            if(process_table[pid]){		
+
 			    if(process_table[pid].status == terminated){
-				    destroy(i);												//don't care about return value, could be used for debugging
+					
+				    destroy(i);		//don't care about return value, could be used for debugging										
 			    }		
 	    	}
         }
 
 		tick_counter++;
-		tick_counter %= 100;												//to make sure that the value of tickcounter is between 0 and 100	
+		//to make sure that the value of tickcounter is between 0 and 100
+		tick_counter %= 100;													
 																																					
 }
 }
