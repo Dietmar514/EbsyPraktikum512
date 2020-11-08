@@ -24,7 +24,7 @@ typedef uint32_t result_t
 
 uint32_t tick_counter = 0;
 uint32_t led_light_frequencies[] = {0, 0, 0, 0, 0, 0, 0, 0};
-pid_t pid = 0;
+pid_t pid = 0;		//Name überschneidet sich mit scruct pid
 s_process process_table[MAX_PROCESSES];
 
 
@@ -152,13 +152,13 @@ void smeared_running_light(){
 		b_is_initialized = 0;
 	}
 
-	if(b_init){
-		
-		//trigger of led_counter to enable the next LED of the running light
-		if(tick_counter == 0){													
-			led_counter++;
-			}
-	}
+	if(b_init){																		//
+																					//
+		//trigger of led_counter to enable the next LED of the running light		//
+		if(tick_counter == 0){														//	Programm ändert sich nicht led_counter muss bei tickcounter == 0 incrementiert werden.
+			led_counter++;															//
+			}																		//
+	}																				//
 
 	b_init = 1;
 	
@@ -264,9 +264,9 @@ void smeared_running_light(){
 
 pid_t create(void* p_function){
 	int new_pid = get_new_pid();
-	process new_process;
+	s_process new_process;
 	new_process.processID = new_pid % MAX_PROCESSES;
-	new_process.status = ready;
+	new_process.status = ready;		//initial value = running?
 	new_process.task = p_function;
 	process_table[new_pid] = new_process;
 }
@@ -319,12 +319,12 @@ int main(void){
 
 		//run all ready processes
 		for (int pid = 0; pid < MAX_PROCESSES; pid++){                      
-            if(process_table[pid]){  
+            if(process_table[pid]){  //check for null?
 		
-				 //alway check if process_table[pid] is NULL!                                      
+				 //always check if process_table[pid] is NULL!                                      
 			    if(process_table[pid].status == ready){
 					//run process
-				    (*process_table[currTask])();
+				    (*process_table[currTask].task)();
 					//set status to terminated after running							
 				    process_table[currTask].status = terminated;			
 			    }		
@@ -339,7 +339,7 @@ int main(void){
 
 			    if(process_table[pid].status == terminated){
 					
-				    destroy(i);		//don't care about return value, could be used for debugging										
+				    destroy(pid);		//don't care about return value, could be used for debugging										
 			    }		
 	    	}
         }
