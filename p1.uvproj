@@ -442,14 +442,19 @@
               <FilePath>.\main.c</FilePath>
             </File>
             <File>
-              <FileName>delay.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>.\delay.s</FilePath>
+              <FileName>led.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\led.c</FilePath>
             </File>
             <File>
-              <FileName>delay.h</FileName>
+              <FileName>led.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\delay.h</FilePath>
+              <FilePath>.\led.h</FilePath>
+            </File>
+            <File>
+              <FileName>global.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\global.h</FilePath>
             </File>
           </Files>
         </Group>

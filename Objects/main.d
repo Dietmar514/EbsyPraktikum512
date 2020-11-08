@@ -5,4 +5,5 @@
 .\objects\main.o: C:\Keil_v5\ARM\CMSIS\Include\core_cmInstr.h
 .\objects\main.o: C:\Keil_v5\ARM\CMSIS\Include\core_cmFunc.h
 .\objects\main.o: C:\Keil_v5\ARM\INC\NXP\LPC177x_8x\system_LPC177x_8x.h
-.\objects\main.o: delay.h
+.\objects\main.o: global.h
+.\objects\main.o: led.h
