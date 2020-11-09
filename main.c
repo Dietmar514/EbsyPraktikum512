@@ -144,23 +144,14 @@ void smeared_running_light(){
 	static uint32_t led_counter;
 	static uint32_t current_led;
 	static uint32_t b_is_initialized;
-	uint32_t b_init = 0;
 
 	//start with LED 0	
-	if(!b_init){																														
+	if(led_counter == 0 && tick_counter == 0){
 		led_counter = 0;
 		b_is_initialized = 0;
 	}
 
-	if(b_init){																		//
-																					//
-		//trigger of led_counter to enable the next LED of the running light		//
-		if(tick_counter == 0){														//	Programm ändert sich nicht led_counter muss bei tickcounter == 0 incrementiert werden.
-			led_counter++;															//
-			}																		//
-	}																				//
-
-	b_init = 1;
+	
 	
 	if(led_counter == 0){													
 		current_led = 0;
@@ -304,49 +295,51 @@ result_t destroy(pid_t _pid){
 void (*tasklist[PROCESS_COUNT])(int) = {controll_led0, controll_led1, controll_led2, controll_led3, controll_led4, controll_led5, controll_led6, controll_led7,  smeared_running_light};
 
 
-int main(void){
+int main(void) {
 
 	//TO DO: Check if value of RUNNING_LIGHT_POS is correct
 	//TO DO: Check struct s_process
 
 	init();
-	while(1){
-		
+	while (1) {
+
 		//register all processes of the tasklist in the schedule table
-		for (int currTask = 0; currTask < PROCESS_COUNT; currTask++){		
+		for (int currTask = 0; currTask < PROCESS_COUNT; currTask++) {
 			create(tasklist[currTask]);
 		}
 
 		//run all ready processes
-		for (int pid = 0; pid < MAX_PROCESSES; pid++){                      
-            if(process_table[pid]){  //check for null?
-		
+		for (int pid = 0; pid < MAX_PROCESSES; pid++) {
+			if (process_table[pid]) {  //check for null?
+
 				 //always check if process_table[pid] is NULL!                                      
-			    if(process_table[pid].status == ready){
+				if (process_table[pid].status == ready) {
 					//run process
-				    (*process_table[currTask].task)();
+					(*process_table[currTask].task)();
 					//set status to terminated after running							
-				    process_table[currTask].status = terminated;			
-			    }		
-	    	}
-        }
+					process_table[currTask].status = terminated;
+				}
+			}
+		}
 
 		//destroy all terminated processes
-        for (int pid = 0; pid < MAX_PROCESSES; pid++){	
+		for (int pid = 0; pid < MAX_PROCESSES; pid++) {
 
 			//alway check if process_table[pid] is NULL!					
-            if(process_table[pid]){		
+			if (process_table[pid]) {
 
-			    if(process_table[pid].status == terminated){
-					
-				    destroy(pid);		//don't care about return value, could be used for debugging										
-			    }		
-	    	}
-        }
+				if (process_table[pid].status == terminated) {
+
+					destroy(pid);		//don't care about return value, could be used for debugging										
+				}
+			}
+		}
 
 		tick_counter++;
 		//to make sure that the value of tickcounter is between 0 and 100
-		tick_counter %= 100;													
-																																					
-}
+		tick_counter %= 100;
+		if (tick_counter == 0) {							
+			led_counter++;															
+		}
+	}
 }
