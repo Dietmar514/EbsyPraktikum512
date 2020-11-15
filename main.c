@@ -1,6 +1,6 @@
 #include <stdint.h>
 #include <LPC177x_8x.h>
-
+#include "delay.h"
 
 typedef uint32_t pid_t;
 typedef uint32_t result_t;
@@ -44,14 +44,27 @@ struct s_process{
 struct s_process process_table[PROCESS_COUNT];
 
 
+void hard_fault_handler(){
+	//do sth for ever
+	while(1){
+		LPC_GPIO0->SET = ADDRESS_LED_0;
+		delayms(100);
+		LPC_GPIO0->CLR = ADDRESS_LED_0;
+	}
+}
+
+void register_handlers(){
+
+	//hard_fault_handler
+	void (*p_hfh)() = 0x0000000C;
+	*p_hfh() = (*hard_fault_handler)();
+
+}
 
 void init(void) {
+	register_handlers();
 	LPC_GPIO0->DIR = 0xFFFFFFFF;
 	LPC_GPIO0->CLR = 0xFFFFFFFF;
-
-	for(int i = 0; i < PROCESS_COUNT; i++){
-//		process_table[i] = NULL;
-	}
 }
 
 pid_t get_new_pid(){
@@ -468,7 +481,9 @@ void clear_process_table(){
 				    destroy(pid);									
 			    }		
         }
-}	
+}
+
+
 
 
 int main(void){
@@ -492,3 +507,5 @@ int main(void){
 		//could be use for implementing shutdown feature for the operating system
 		//clear_process_table();
 }
+
+
