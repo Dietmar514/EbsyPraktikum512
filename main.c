@@ -1,15 +1,11 @@
 #include <stdint.h>
 #include <LPC177x_8x.h>
 
-uint32_t tick_counter = 0;
-uint32_t led_counter = 0;
 
 typedef uint32_t pid_t;
 typedef uint32_t result_t;
 
 #define PROCESS_COUNT 9
-#define MAX_PROCESSES 9
-
 #define ADDRESS_LED_0 0x0100
 #define ADDRESS_LED_1 0x0200
 #define ADDRESS_LED_2 0x0400
@@ -20,31 +16,32 @@ typedef uint32_t result_t;
 #define ADDRESS_LED_7 0x8000
 #define MAX_TICKS 200
 #define AVAILABLE_LEDS 8
-#define RUNNING_LIGHT_POS 16 //TO DO: Check this
+#define RUNNING_LIGHT_POS 16 
+
+uint32_t tick_counter = 0;
+uint32_t led_counter = 0;
+pid_t global_pid = 0;
 
 enum e_status{
 	running,
 	ready,
 	blocked,
 	terminated,
-  zombie
+  	zombie
 };
 
 struct s_process{
 	void (*task)();
 	pid_t pid;
 	enum e_status status;
-}s_process; //TO DO: Check this
+	int32_t remaining_runs;
+}; 
 
 
-pid_t pid = 0;
+
 
 //array of all processes
-struct s_process process_table[MAX_PROCESSES];
-
-//array of all function pointers to all processes
-
-
+struct s_process process_table[PROCESS_COUNT];
 
 
 
@@ -52,14 +49,14 @@ void init(void) {
 	LPC_GPIO0->DIR = 0xFFFFFFFF;
 	LPC_GPIO0->CLR = 0xFFFFFFFF;
 
-	for(int i = 0; i < MAX_PROCESSES; i++){
+	for(int i = 0; i < PROCESS_COUNT; i++){
 //		process_table[i] = NULL;
 	}
 }
 
 pid_t get_new_pid(){
-	uint32_t value = pid;
-	pid++;
+	uint32_t value = global_pid;
+	global_pid++;
 	return value;
 }
 
@@ -140,7 +137,7 @@ void controll_led7(){
 
 /**
  * @brief Startet ein verschmiertes Lauflicht. Auf dem led board leuchtet, je nach gesetzter Geschwindigkeit, immer eine LED mit 100 % Staerke. 
- * Nach jedem Schritt leuchtet die vorherige LED mit 30 % weniger Staerke. Die prozentuale Staerke wird durch die Häufigkeit der on/off-Zyklen bestimmt.
+ * Nach jedem Schritt leuchtet die vorherige LED mit 30 % weniger Staerke. Die prozentuale Staerke wird durch die Hï¿½ufigkeit der on/off-Zyklen bestimmt.
  */
 
 void smeared_running_light(){
@@ -385,11 +382,14 @@ void smeared_running_light(){
 pid_t create(void (*p_function)()){
 	int new_pid = get_new_pid();
 	struct s_process new_process;
-	new_pid %= MAX_PROCESSES;
-	new_process.pid = new_pid % MAX_PROCESSES;
+	new_pid %= PROCESS_COUNT;
+	new_process.pid = new_pid % PROCESS_COUNT;
 	new_process.status = ready;
 	new_process.task = p_function;
 	process_table[new_pid] = new_process;
+
+	//-1 to run all processes for ever
+	new_process.remaining_runs = -1;
 	
 	return new_pid;
 }
@@ -397,7 +397,7 @@ pid_t create(void (*p_function)()){
 /**
  * @brief default function to destroy a terminated process
  * 
- * @param pid 
+ * @param _pid 
  * @return result_t number for errorhandling
  */
 
@@ -407,7 +407,7 @@ result_t destroy(pid_t _pid){
         return 0;
     }
 
-		//Errorhandling
+	//Errorhandling
     if(process_table[_pid].status == ready){      
         return 1;
     }
@@ -425,17 +425,28 @@ result_t destroy(pid_t _pid){
  * 
  */
 void run_all_processes(){
-		for (int pid = 0; pid < MAX_PROCESSES; pid++){                                               
-			 if(process_table[pid].status == ready){
+		for (int _pid = 0; _pid < PROCESS_COUNT; _pid++){                                               
+			 if(process_table[_pid].status == ready){
 					//run process
-					(*process_table[pid].task)();
-					//set status to terminated after running							
-					process_table[pid].status = terminated;			
+					if(process_table[_pid].remaining_runs > 0 || process_table[_pid].remaining_runs == -1){
+						//decrement the remaining_runs
+						process_table[_pid].remaining_runs--;
+						(*process_table[_pid].task)();			
+					}
+					else{
+						process_table[_pid].status = terminated;
+						destroy(_pid);
+					}
 			  }	
-     }
+     	}
 	 }	
+
+
+//array of all function pointers to all processes
 void (*tasklist[PROCESS_COUNT])() = {controll_led0, controll_led1, controll_led2, controll_led3, controll_led4, controll_led5, controll_led6, controll_led7,  smeared_running_light};
-	 /**
+
+
+/**
  * @brief register all processes to the process table
  * 
  */
@@ -452,9 +463,9 @@ void register_all_processes(){
  */
 void clear_process_table(){
 	
-     for (int pid = 0; pid < MAX_PROCESSES; pid++){		
+     for (int pid = 0; pid < PROCESS_COUNT; pid++){		
 			   if(process_table[pid].status == terminated){			
-				    destroy(pid);				//don't care about return value, could be used for debugging										
+				    destroy(pid);									
 			    }		
         }
 }	
@@ -462,18 +473,15 @@ void clear_process_table(){
 
 int main(void){
 
-	//TO DO: Check if value of RUNNING_LIGHT_POS is correct
-	//TO DO: Check struct s_process
 
 	init();
+	register_all_processes();
 	while(1){
 		
-		register_all_processes();
-
+		
 		run_all_processes();
 
-		clear_process_table();
-
+		//TODO: use processor timers for a more accurate result
 		tick_counter++;
 		//to make sure that the value of tickcounter is between 0 and 100
 		tick_counter %= 100;													
@@ -481,4 +489,6 @@ int main(void){
 			led_counter++;
 		}																													
 }
+		//could be use for implementing shutdown feature for the operating system
+		//clear_process_table();
 }
