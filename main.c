@@ -1,6 +1,5 @@
 #include <stdint.h>
 #include <LPC177x_8x.h>
-#include "delay.h"
 
 typedef uint32_t pid_t;
 typedef uint32_t result_t;
@@ -22,12 +21,14 @@ uint32_t tick_counter = 0;
 uint32_t led_counter = 0;
 pid_t global_pid = 0;
 
+uint32_t stack[PROCESS_COUNT][32];
+
 enum e_status{
 	running,
 	ready,
 	blocked,
 	terminated,
-  	zombie
+  zombie
 };
 
 struct s_process{
@@ -35,6 +36,7 @@ struct s_process{
 	pid_t pid;
 	enum e_status status;
 	int32_t remaining_runs;
+	uint32_t* p_stack_pointer;
 }; 
 
 
@@ -44,25 +46,7 @@ struct s_process{
 struct s_process process_table[PROCESS_COUNT];
 
 
-void hard_fault_handler(){
-	//do sth for ever
-	while(1){
-		LPC_GPIO0->SET = ADDRESS_LED_0;
-		delayms(100);
-		LPC_GPIO0->CLR = ADDRESS_LED_0;
-	}
-}
-
-void register_handlers(){
-
-	//hard_fault_handler
-	void (*p_hfh)() = 0x0000000C;
-	*p_hfh() = (*hard_fault_handler)();
-
-}
-
 void init(void) {
-	register_handlers();
 	LPC_GPIO0->DIR = 0xFFFFFFFF;
 	LPC_GPIO0->CLR = 0xFFFFFFFF;
 }
@@ -392,18 +376,18 @@ void smeared_running_light(){
  * @param p_function pointer to function of the new process
  * @return pid_t id of new process
  */
-pid_t create(void (*p_function)()){
+pid_t create(void (*p_function)(), int _remaining_runs){
 	int new_pid = get_new_pid();
 	struct s_process new_process;
 	new_pid %= PROCESS_COUNT;
 	new_process.pid = new_pid % PROCESS_COUNT;
 	new_process.status = ready;
 	new_process.task = p_function;
-	process_table[new_pid] = new_process;
-
 	//-1 to run all processes for ever
-	new_process.remaining_runs = -1;
+	new_process.remaining_runs = _remaining_runs;
 	
+	
+	process_table[new_pid] = new_process;
 	return new_pid;
 }
 
@@ -420,7 +404,7 @@ result_t destroy(pid_t _pid){
         return 0;
     }
 
-	//Errorhandling
+		//Errorhandling
     if(process_table[_pid].status == ready){      
         return 1;
     }
@@ -442,8 +426,11 @@ void run_all_processes(){
 			 if(process_table[_pid].status == ready){
 					//run process
 					if(process_table[_pid].remaining_runs > 0 || process_table[_pid].remaining_runs == -1){
-						//decrement the remaining_runs
-						process_table[_pid].remaining_runs--;
+						
+						if(process_table[_pid].remaining_runs > 0){
+							//decrement the remaining_runs
+							process_table[_pid].remaining_runs--;
+						}
 						(*process_table[_pid].task)();			
 					}
 					else{
@@ -464,10 +451,15 @@ void (*tasklist[PROCESS_COUNT])() = {controll_led0, controll_led1, controll_led2
  * 
  */
 void register_all_processes(){
-		for (int currTask = 0; currTask < PROCESS_COUNT; currTask++){		
-			create(tasklist[currTask]);
+		for (int currTask = 0; currTask < PROCESS_COUNT; currTask++){
+			if(currTask == 0){	
+				create(tasklist[currTask], 4999);
+			}
+			else{
+				create(tasklist[currTask], -1);
 		}
-	}		
+	}
+}		
 	
 	
 /**
@@ -483,14 +475,27 @@ void clear_process_table(){
         }
 }
 
+void HardFault_Handler(void){
+			while (1) {
+				LPC_GPIO0->SET = 0xFFFFFFFF;
+				//TODO: Implement some debugg tools
+			}
+		}
 
+void yield(){
+	
+}
 
+void switchContext(uint32_t* p_old_stack, uint32_t* p_new_stack){
+	
+}
 
 int main(void){
 
 
 	init();
 	register_all_processes();
+	
 	while(1){
 		
 		
