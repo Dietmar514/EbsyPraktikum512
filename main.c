@@ -34,7 +34,7 @@ struct s_process{
 	void (*task)();
 	pid_t pid;
 	enum e_status status;
-	int32_t remaining_runs;
+	int remaining_runs;
 }; 
 
 
@@ -48,10 +48,6 @@ struct s_process process_table[PROCESS_COUNT];
 void init(void) {
 	LPC_GPIO0->DIR = 0xFFFFFFFF;
 	LPC_GPIO0->CLR = 0xFFFFFFFF;
-
-	for(int i = 0; i < PROCESS_COUNT; i++){
-//		process_table[i] = NULL;
-	}
 }
 
 pid_t get_new_pid(){
@@ -386,10 +382,11 @@ pid_t create(void (*p_function)()){
 	new_process.pid = new_pid % PROCESS_COUNT;
 	new_process.status = ready;
 	new_process.task = p_function;
+	new_process.remaining_runs = -1;
 	process_table[new_pid] = new_process;
 
 	//-1 to run all processes for ever
-	new_process.remaining_runs = -1;
+	
 	
 	return new_pid;
 }
@@ -430,7 +427,9 @@ void run_all_processes(){
 					//run process
 					if(process_table[_pid].remaining_runs > 0 || process_table[_pid].remaining_runs == -1){
 						//decrement the remaining_runs
-						process_table[_pid].remaining_runs--;
+						if(process_table[_pid].remaining_runs > 0){
+							process_table[_pid].remaining_runs--;
+						}
 						(*process_table[_pid].task)();			
 					}
 					else{
