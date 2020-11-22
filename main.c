@@ -1,5 +1,7 @@
 #include <stdint.h>
 #include <LPC177x_8x.h>
+#include "first_context.h"
+#include "switch_context.h"
 
 typedef uint32_t pid_t;
 typedef uint32_t result_t;
@@ -17,6 +19,8 @@ typedef uint32_t result_t;
 #define AVAILABLE_LEDS 8
 #define RUNNING_LIGHT_POS 16 
 
+uint32_t current_process = 0;
+uint32_t next_process = 0;
 uint32_t tick_counter = 0;
 uint32_t led_counter = 0;
 pid_t global_pid = 0;
@@ -28,7 +32,7 @@ enum e_status{
 	ready,
 	blocked,
 	terminated,
-  zombie
+  	zombie
 };
 
 struct s_process{
@@ -40,6 +44,8 @@ struct s_process{
 }; 
 
 
+extern void first_context(uint32_t* p_sp);
+extern void switch_context(uint32_t* p_old_stack, uint32_t* p_new_stack);
 
 
 //array of all processes
@@ -57,6 +63,33 @@ pid_t get_new_pid(){
 	return value;
 }
 
+
+void yield(){
+
+		next_process = (current_process+1%PROCESS_COUNT);
+		
+		if(process_table[next_process].status == ready){
+
+			process_table[next_process].status = running;
+
+			switch_context(process_table[current_process].p_stack_pointer, process_table[next_process].p_stack_pointer);
+
+		
+			if(process_table[next_process].remaining_runs > 0 || process_table[next_process].remaining_runs == -1){						
+					if(process_table[next_process].remaining_runs > 0){
+						process_table[next_process].remaining_runs--;	
+					}
+					(*process_table[next_process].task)();
+					process_table[next_process].status = ready;
+			}
+			else{
+				process_table[next_process].status = terminated;
+			}
+		}
+		current_process = next_process;
+}
+
+
 uint32_t led_light_frequencies[AVAILABLE_LEDS] = {100};
 
 void controll_led0(){	
@@ -66,7 +99,7 @@ void controll_led0(){
 	else{
 		LPC_GPIO0->CLR = ADDRESS_LED_0;
 	}
-
+	yield();
 }
 
 void controll_led1(){
@@ -76,6 +109,7 @@ void controll_led1(){
 	else{
 		LPC_GPIO0->CLR = ADDRESS_LED_1;
 	}
+	yield();
 }
 
 void controll_led2(){
@@ -85,6 +119,7 @@ void controll_led2(){
 	else{
 		LPC_GPIO0->CLR = ADDRESS_LED_2;
 	}
+	yield();
 }
 
 void controll_led3(){
@@ -94,6 +129,7 @@ void controll_led3(){
 	else{
 		LPC_GPIO0->CLR = ADDRESS_LED_3;
 	}
+	yield();
 }
 
 void controll_led4(){
@@ -103,6 +139,7 @@ void controll_led4(){
 	else{
 		LPC_GPIO0->CLR = ADDRESS_LED_4;
 	}
+	yield();
 }
 
 void controll_led5(){
@@ -112,6 +149,7 @@ void controll_led5(){
 	else{
 		LPC_GPIO0->CLR = ADDRESS_LED_5;
 	}
+	yield();
 }
 
 void controll_led6(){
@@ -121,6 +159,7 @@ void controll_led6(){
 	else{
 		LPC_GPIO0->CLR = ADDRESS_LED_6;
 	}
+	yield();
 }
 
 void controll_led7(){
@@ -130,6 +169,7 @@ void controll_led7(){
 	else{
 		LPC_GPIO0->CLR = ADDRESS_LED_7;
 	}
+	yield();
 }
 
 /**
@@ -365,6 +405,7 @@ void smeared_running_light(){
 		current_led %= RUNNING_LIGHT_POS;
 
 	}	//end if led_counter % MAX_TICKS == 0 && tick_counter == 0
+	yield();
 } //end function smeared_running_light
 
 
@@ -385,9 +426,13 @@ pid_t create(void (*p_function)(), int _remaining_runs){
 	new_process.task = p_function;
 	//-1 to run all processes for ever
 	new_process.remaining_runs = _remaining_runs;
+
+
 	
 	
+
 	process_table[new_pid] = new_process;
+
 	return new_pid;
 }
 
@@ -451,13 +496,10 @@ void (*tasklist[PROCESS_COUNT])() = {controll_led0, controll_led1, controll_led2
  * 
  */
 void register_all_processes(){
-		for (int currTask = 0; currTask < PROCESS_COUNT; currTask++){
-			if(currTask == 0){	
-				create(tasklist[currTask], 4999);
-			}
-			else{
-				create(tasklist[currTask], -1);
-		}
+	for (int currTask = 0; currTask < PROCESS_COUNT; currTask++){	
+		create(tasklist[currTask], -1);
+		process_table[currTask].p_stack_pointer = &stack[currTask][31];
+		first_context(process_table[currTask].p_stack_pointer);
 	}
 }		
 	
@@ -476,14 +518,10 @@ void clear_process_table(){
 }
 
 void HardFault_Handler(void){
-			while (1) {
-				LPC_GPIO0->SET = 0xFFFFFFFF;
-				//TODO: Implement some debugg tools
-			}
-		}
-
-void yield(){
-	
+	while (1) {
+		LPC_GPIO0->SET = 0xFFFFFFFF;
+		//TODO: Implement some debugg tools
+	}
 }
 
 void switchContext(uint32_t* p_old_stack, uint32_t* p_new_stack){
@@ -499,7 +537,7 @@ int main(void){
 	while(1){
 		
 		
-		run_all_processes();
+		yield();
 
 		//TODO: use processor timers for a more accurate result
 		tick_counter++;

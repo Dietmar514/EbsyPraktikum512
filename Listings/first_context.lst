@@ -1,0 +1,51 @@
+
+
+
+ARM Macro Assembler    Page 1 
+
+
+    1 00000000                 AREA             asmcode, CODE, READONLY
+    2 00000000         
+    3 00000000         first_context
+                               PROC
+    4 00000000         
+    5 00000000                 EXPORT           first_context
+    6 00000000 4685            MOV              sp, r0
+    7 00000002 E8BD 1F00       POP              {r8-r12}
+    8 00000006 BDF0            POP              {r4-r7, pc}
+    9 00000008                 ENDP
+   10 00000008         
+   11 00000008         
+   12 00000008         
+   13 00000008         
+   14 00000008         
+                       
+Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M3 --apcs=interw
+ork --depend=.\objects\first_context.d -o.\objects\first_context.o -IC:\Keil_v5
+\ARM\RV31\INC -IC:\Keil_v5\ARM\CMSIS\Include -IC:\Keil_v5\ARM\INC\NXP\LPC177x_8
+x --predefine="__EVAL SETA 1" --predefine="__UVISION_VERSION SETA 529" --list=.
+\listings\first_context.lst first_context.s
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+asmcode 00000000
+
+Symbol: asmcode
+   Definitions
+      At line 1 in file first_context.s
+   Uses
+      None
+Comment: asmcode unused
+first_context 00000000
+
+Symbol: first_context
+   Definitions
+      At line 3 in file first_context.s
+   Uses
+      At line 5 in file first_context.s
+Comment: first_context used once
+2 symbols
+334 symbols in table

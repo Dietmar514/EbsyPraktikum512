@@ -441,6 +441,26 @@
               <FileType>1</FileType>
               <FilePath>.\main.c</FilePath>
             </File>
+            <File>
+              <FileName>first_context.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\first_context.h</FilePath>
+            </File>
+            <File>
+              <FileName>first_context.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>.\first_context.s</FilePath>
+            </File>
+            <File>
+              <FileName>switch_context.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\switch_context.h</FilePath>
+            </File>
+            <File>
+              <FileName>switch_context.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>.\switch_context.s</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>
