@@ -2,13 +2,10 @@
 
 first_context PROC
 
-   EXPORT first_context
-   MOV sp, r0
-   POP {r8-r12}
-   POP {r4-r7, pc}
-   ENDP
-
-
-
-
-
+	EXPORT first_context
+	MOV sp, r0
+	PUSH {r1}
+	PUSH {r4-r12}
+	bx lr
+	ENDP
+	END

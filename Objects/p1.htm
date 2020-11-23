@@ -3,7 +3,7 @@
 <title>Static Call Graph - [.\Objects\p1.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\Objects\p1.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Sun Nov 22 17:58:57 2020
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Mon Nov 23 17:27:23 2020
 <BR><P>
 <H3>Maximum Stack Usage =         56 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -422,10 +422,10 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[47]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__user_setup_stackheap
 </UL>
 
-<P><STRONG><a name="[56]"></a>__aeabi_memcpy4</STRONG> (Thumb, 0 bytes, Stack size 8 bytes, rt_memcpy_w.o(.text))
+<P><STRONG><a name="[57]"></a>__aeabi_memcpy4</STRONG> (Thumb, 0 bytes, Stack size 8 bytes, rt_memcpy_w.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = __aeabi_memcpy4
 </UL>
-<BR>[Called By]<UL><LI><a href="#[54]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;create
+<BR>[Called By]<UL><LI><a href="#[55]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;create
 </UL>
 
 <P><STRONG><a name="[7f]"></a>__aeabi_memcpy8</STRONG> (Thumb, 0 bytes, Stack size 8 bytes, rt_memcpy_w.o(.text), UNUSED)
@@ -477,91 +477,136 @@ Global Symbols
 
 <P><STRONG><a name="[89]"></a>__semihosting_library_function</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, indicate_semi.o(.text), UNUSED)
 
-<P><STRONG><a name="[5a]"></a>first_context</STRONG> (Thumb, 8 bytes, Stack size 0 bytes, first_context.o(asmcode))
-<BR><BR>[Called By]<UL><LI><a href="#[58]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;register_all_processes
+<P><STRONG><a name="[5a]"></a>first_context</STRONG> (Thumb, 10 bytes, Stack size 0 bytes, first_context.o(asmcode))
+<BR><BR>[Called By]<UL><LI><a href="#[59]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;register_all_processes
+</UL>
+
+<P><STRONG><a name="[5b]"></a>switch_context</STRONG> (Thumb, 18 bytes, Stack size 0 bytes, switch_context.o(asmcode))
+<BR><BR>[Called By]<UL><LI><a href="#[54]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;yield
 </UL>
 
 <P><STRONG><a name="[5]"></a>HardFault_Handler</STRONG> (Thumb, 12 bytes, Stack size 0 bytes, main.o(i.HardFault_Handler))
 <BR>[Address Reference Count : 1]<UL><LI> startup_lpc177x_8x.o(RESET)
 </UL>
-<P><STRONG><a name="[38]"></a>controll_led0</STRONG> (Thumb, 32 bytes, Stack size 0 bytes, main.o(i.controll_led0))
-<BR>[Address Reference Count : 1]<UL><LI> main.o(.data)
+<P><STRONG><a name="[56]"></a>get_new_pid</STRONG> (Thumb, 14 bytes, Stack size 0 bytes, main.o(i.get_new_pid))
+<BR><BR>[Called By]<UL><LI><a href="#[55]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;create
 </UL>
-<P><STRONG><a name="[55]"></a>get_new_pid</STRONG> (Thumb, 14 bytes, Stack size 0 bytes, main.o(i.get_new_pid))
-<BR><BR>[Called By]<UL><LI><a href="#[54]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;create
+
+<P><STRONG><a name="[58]"></a>init</STRONG> (Thumb, 12 bytes, Stack size 0 bytes, main.o(i.init))
+<BR><BR>[Called By]<UL><LI><a href="#[4b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
 <P><STRONG><a name="[36]"></a>SystemInit</STRONG> (Thumb, 204 bytes, Stack size 0 bytes, system_lpc177x_8x.o(i.SystemInit))
 <BR>[Address Reference Count : 1]<UL><LI> startup_lpc177x_8x.o(.text)
 </UL>
-<P><STRONG><a name="[39]"></a>controll_led1</STRONG> (Thumb, 32 bytes, Stack size 0 bytes, main.o(i.controll_led1))
+<P><STRONG><a name="[38]"></a>controll_led0</STRONG> (Thumb, 38 bytes, Stack size 8 bytes, main.o(i.controll_led0))
+<BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = controll_led0 &rArr; yield
+</UL>
+<BR>[Calls]<UL><LI><a href="#[54]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;yield
+</UL>
 <BR>[Address Reference Count : 1]<UL><LI> main.o(.data)
 </UL>
-<P><STRONG><a name="[3a]"></a>controll_led2</STRONG> (Thumb, 32 bytes, Stack size 0 bytes, main.o(i.controll_led2))
+<P><STRONG><a name="[39]"></a>controll_led1</STRONG> (Thumb, 38 bytes, Stack size 8 bytes, main.o(i.controll_led1))
+<BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = controll_led1 &rArr; yield
+</UL>
+<BR>[Calls]<UL><LI><a href="#[54]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;yield
+</UL>
 <BR>[Address Reference Count : 1]<UL><LI> main.o(.data)
 </UL>
-<P><STRONG><a name="[3b]"></a>controll_led3</STRONG> (Thumb, 32 bytes, Stack size 0 bytes, main.o(i.controll_led3))
+<P><STRONG><a name="[3a]"></a>controll_led2</STRONG> (Thumb, 38 bytes, Stack size 8 bytes, main.o(i.controll_led2))
+<BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = controll_led2 &rArr; yield
+</UL>
+<BR>[Calls]<UL><LI><a href="#[54]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;yield
+</UL>
 <BR>[Address Reference Count : 1]<UL><LI> main.o(.data)
 </UL>
-<P><STRONG><a name="[3c]"></a>controll_led4</STRONG> (Thumb, 32 bytes, Stack size 0 bytes, main.o(i.controll_led4))
+<P><STRONG><a name="[3b]"></a>controll_led3</STRONG> (Thumb, 38 bytes, Stack size 8 bytes, main.o(i.controll_led3))
+<BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = controll_led3 &rArr; yield
+</UL>
+<BR>[Calls]<UL><LI><a href="#[54]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;yield
+</UL>
 <BR>[Address Reference Count : 1]<UL><LI> main.o(.data)
 </UL>
-<P><STRONG><a name="[3d]"></a>controll_led5</STRONG> (Thumb, 32 bytes, Stack size 0 bytes, main.o(i.controll_led5))
+<P><STRONG><a name="[3c]"></a>controll_led4</STRONG> (Thumb, 38 bytes, Stack size 8 bytes, main.o(i.controll_led4))
+<BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = controll_led4 &rArr; yield
+</UL>
+<BR>[Calls]<UL><LI><a href="#[54]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;yield
+</UL>
 <BR>[Address Reference Count : 1]<UL><LI> main.o(.data)
 </UL>
-<P><STRONG><a name="[3e]"></a>controll_led6</STRONG> (Thumb, 32 bytes, Stack size 0 bytes, main.o(i.controll_led6))
+<P><STRONG><a name="[3d]"></a>controll_led5</STRONG> (Thumb, 38 bytes, Stack size 8 bytes, main.o(i.controll_led5))
+<BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = controll_led5 &rArr; yield
+</UL>
+<BR>[Calls]<UL><LI><a href="#[54]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;yield
+</UL>
 <BR>[Address Reference Count : 1]<UL><LI> main.o(.data)
 </UL>
-<P><STRONG><a name="[3f]"></a>controll_led7</STRONG> (Thumb, 32 bytes, Stack size 0 bytes, main.o(i.controll_led7))
+<P><STRONG><a name="[3e]"></a>controll_led6</STRONG> (Thumb, 38 bytes, Stack size 8 bytes, main.o(i.controll_led6))
+<BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = controll_led6 &rArr; yield
+</UL>
+<BR>[Calls]<UL><LI><a href="#[54]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;yield
+</UL>
 <BR>[Address Reference Count : 1]<UL><LI> main.o(.data)
 </UL>
-<P><STRONG><a name="[54]"></a>create</STRONG> (Thumb, 68 bytes, Stack size 40 bytes, main.o(i.create))
+<P><STRONG><a name="[3f]"></a>controll_led7</STRONG> (Thumb, 38 bytes, Stack size 8 bytes, main.o(i.controll_led7))
+<BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = controll_led7 &rArr; yield
+</UL>
+<BR>[Calls]<UL><LI><a href="#[54]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;yield
+</UL>
+<BR>[Address Reference Count : 1]<UL><LI> main.o(.data)
+</UL>
+<P><STRONG><a name="[55]"></a>create</STRONG> (Thumb, 68 bytes, Stack size 40 bytes, main.o(i.create))
 <BR><BR>[Stack]<UL><LI>Max Depth = 48<LI>Call Chain = create &rArr; __aeabi_memcpy4
 </UL>
-<BR>[Calls]<UL><LI><a href="#[56]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy4
-<LI><a href="#[55]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;get_new_pid
+<BR>[Calls]<UL><LI><a href="#[57]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy4
+<LI><a href="#[56]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;get_new_pid
 </UL>
-<BR>[Called By]<UL><LI><a href="#[58]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;register_all_processes
-</UL>
-
-<P><STRONG><a name="[5b]"></a>destroy</STRONG> (Thumb, 94 bytes, Stack size 0 bytes, main.o(i.destroy))
-<BR><BR>[Called By]<UL><LI><a href="#[59]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;run_all_processes
-</UL>
-
-<P><STRONG><a name="[57]"></a>init</STRONG> (Thumb, 12 bytes, Stack size 0 bytes, main.o(i.init))
-<BR><BR>[Called By]<UL><LI><a href="#[4b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
+<BR>[Called By]<UL><LI><a href="#[59]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;register_all_processes
 </UL>
 
 <P><STRONG><a name="[4b]"></a>main</STRONG> (Thumb, 60 bytes, Stack size 0 bytes, main.o(i.main))
 <BR><BR>[Stack]<UL><LI>Max Depth = 56<LI>Call Chain = main &rArr; register_all_processes &rArr; create &rArr; __aeabi_memcpy4
 </UL>
-<BR>[Calls]<UL><LI><a href="#[59]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;run_all_processes
-<LI><a href="#[58]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;register_all_processes
-<LI><a href="#[57]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;init
+<BR>[Calls]<UL><LI><a href="#[54]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;yield
+<LI><a href="#[59]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;register_all_processes
+<LI><a href="#[58]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;init
 </UL>
 <BR>[Called By]<UL><LI><a href="#[4a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__rt_entry_main
 </UL>
 
-<P><STRONG><a name="[58]"></a>register_all_processes</STRONG> (Thumb, 62 bytes, Stack size 8 bytes, main.o(i.register_all_processes))
+<P><STRONG><a name="[59]"></a>register_all_processes</STRONG> (Thumb, 72 bytes, Stack size 8 bytes, main.o(i.register_all_processes))
 <BR><BR>[Stack]<UL><LI>Max Depth = 56<LI>Call Chain = register_all_processes &rArr; create &rArr; __aeabi_memcpy4
 </UL>
 <BR>[Calls]<UL><LI><a href="#[5a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;first_context
-<LI><a href="#[54]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;create
+<LI><a href="#[55]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;create
 </UL>
 <BR>[Called By]<UL><LI><a href="#[4b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[59]"></a>run_all_processes</STRONG> (Thumb, 132 bytes, Stack size 8 bytes, main.o(i.run_all_processes))
-<BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = run_all_processes
+<P><STRONG><a name="[40]"></a>smeared_running_light</STRONG> (Thumb, 618 bytes, Stack size 8 bytes, main.o(i.smeared_running_light))
+<BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = smeared_running_light &rArr; yield
 </UL>
-<BR>[Calls]<UL><LI><a href="#[5b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;destroy
+<BR>[Calls]<UL><LI><a href="#[54]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;yield
 </UL>
-<BR>[Called By]<UL><LI><a href="#[4b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
-</UL>
-
-<P><STRONG><a name="[40]"></a>smeared_running_light</STRONG> (Thumb, 612 bytes, Stack size 0 bytes, main.o(i.smeared_running_light))
 <BR>[Address Reference Count : 1]<UL><LI> main.o(.data)
-</UL><P>
+</UL>
+<P><STRONG><a name="[54]"></a>yield</STRONG> (Thumb, 248 bytes, Stack size 8 bytes, main.o(i.yield))
+<BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = yield
+</UL>
+<BR>[Calls]<UL><LI><a href="#[5b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;switch_context
+</UL>
+<BR>[Called By]<UL><LI><a href="#[40]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;smeared_running_light
+<LI><a href="#[4b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
+<LI><a href="#[3f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;controll_led7
+<LI><a href="#[3e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;controll_led6
+<LI><a href="#[3d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;controll_led5
+<LI><a href="#[3c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;controll_led4
+<LI><a href="#[3b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;controll_led3
+<LI><a href="#[3a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;controll_led2
+<LI><a href="#[39]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;controll_led1
+<LI><a href="#[38]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;controll_led0
+</UL>
+<P>
 <H3>
 Local Symbols
 </H3><P>

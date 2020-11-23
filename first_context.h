@@ -27,7 +27,7 @@
 
 /*  - F u n c t i o n  P r o t o t y p e s                               */
 
-   void  first_context(uint32_t* p);
+   void  first_context(uint32_t* p, void (*task)());
 
 
 #endif  // _FIRST_CONTEXT_H

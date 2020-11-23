@@ -44,7 +44,7 @@ struct s_process{
 }; 
 
 
-extern void first_context(uint32_t* p_sp);
+extern void first_context(uint32_t* p_sp, void (*task)());
 extern void switch_context(uint32_t* p_old_stack, uint32_t* p_new_stack);
 
 
@@ -66,7 +66,7 @@ pid_t get_new_pid(){
 
 void yield(){
 
-		next_process = (current_process+1%PROCESS_COUNT);
+		next_process = ((current_process + 1) % PROCESS_COUNT);
 		
 		if(process_table[next_process].status == ready){
 
@@ -499,7 +499,7 @@ void register_all_processes(){
 	for (int currTask = 0; currTask < PROCESS_COUNT; currTask++){	
 		create(tasklist[currTask], -1);
 		process_table[currTask].p_stack_pointer = &stack[currTask][31];
-		first_context(process_table[currTask].p_stack_pointer);
+		first_context(process_table[currTask].p_stack_pointer, process_table[currTask].task);
 	}
 }		
 	
@@ -524,20 +524,16 @@ void HardFault_Handler(void){
 	}
 }
 
-void switchContext(uint32_t* p_old_stack, uint32_t* p_new_stack){
-	
-}
-
 int main(void){
 
 
 	init();
 	register_all_processes();
-	
+	yield();
 	while(1){
 		
 		
-		yield();
+		
 
 		//TODO: use processor timers for a more accurate result
 		tick_counter++;
