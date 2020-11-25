@@ -6,7 +6,7 @@
 typedef uint32_t pid_t;
 typedef uint32_t result_t;
 
-#define PROCESS_COUNT 9
+#define PROCESS_COUNT 3
 #define ADDRESS_LED_0 0x0100
 #define ADDRESS_LED_1 0x0200
 #define ADDRESS_LED_2 0x0400
@@ -15,15 +15,12 @@ typedef uint32_t result_t;
 #define ADDRESS_LED_5 0x2000
 #define ADDRESS_LED_6 0x4000
 #define ADDRESS_LED_7 0x8000
-#define MAX_TICKS 200
-#define AVAILABLE_LEDS 8
-#define RUNNING_LIGHT_POS 16 
+#define LED_GROUP_SIZE 4
 
 uint32_t current_process = 0;
-uint32_t next_process = 0;
-uint32_t tick_counter = 0;
-uint32_t led_counter = 0;
 pid_t global_pid = 0;
+uint8_t current_LED_grp_1 = 0;
+uint8_t current_LED_grp_2 = 0;
 
 uint32_t stack[PROCESS_COUNT][32];
 
@@ -44,8 +41,9 @@ struct s_process{
 }; 
 
 
-extern void first_context(uint32_t* p_sp, void (*task)());
+extern void first_context(uint32_t* p_sp);
 extern void switch_context(uint32_t* p_old_stack, uint32_t* p_new_stack);
+extern void delayms(uint32_t delay);
 
 
 //array of all processes
@@ -65,351 +63,60 @@ pid_t get_new_pid(){
 
 
 void yield(){
+	process_table[current_process].status = terminated;
+	current_process %= PROCESS_COUNT;
+	uint32_t next_process = ((current_process + 1) % PROCESS_COUNT);
+	process_table[next_process].status = running;
 
-		next_process = ((current_process + 1) % PROCESS_COUNT);
-		
-		if(process_table[next_process].status == ready){
-
-			process_table[next_process].status = running;
-
-			switch_context(process_table[current_process].p_stack_pointer, process_table[next_process].p_stack_pointer);
-
-		
-			if(process_table[next_process].remaining_runs > 0 || process_table[next_process].remaining_runs == -1){						
-					if(process_table[next_process].remaining_runs > 0){
-						process_table[next_process].remaining_runs--;	
-					}
-					(*process_table[next_process].task)();
-					process_table[next_process].status = ready;
-			}
-			else{
-				process_table[next_process].status = terminated;
-			}
-		}
-		current_process = next_process;
+	switch_context(process_table[current_process++].p_stack_pointer, process_table[next_process].p_stack_pointer);
 }
 
 
-uint32_t led_light_frequencies[AVAILABLE_LEDS] = {100};
+void controll_led_grp_1(){	
 
-void controll_led0(){	
-	if (tick_counter < led_light_frequencies[0]){
-		LPC_GPIO0->SET = ADDRESS_LED_0;
+	LPC_GPIO0->CLR = ADDRESS_LED_0 | ADDRESS_LED_1 | ADDRESS_LED_2 | ADDRESS_LED_3;
+
+	switch(current_LED_grp_1){
+		case 0: LPC_GPIO0->SET = ADDRESS_LED_0;
+				break;
+		case 1: LPC_GPIO0->SET = ADDRESS_LED_1;
+				break;
+		case 2: LPC_GPIO0->SET = ADDRESS_LED_2;
+				break;
+		case 3: LPC_GPIO0->SET = ADDRESS_LED_3;
+				break;
 	}
-	else{
-		LPC_GPIO0->CLR = ADDRESS_LED_0;
-	}
+
+	current_LED_grp_1++;
+	current_LED_grp_1 %= LED_GROUP_SIZE;
+
 	yield();
 }
 
-void controll_led1(){
-	if (tick_counter < led_light_frequencies[1]){
-		LPC_GPIO0->SET = ADDRESS_LED_1;
+void controll_led_grp_2(){
+
+	LPC_GPIO0->CLR = ADDRESS_LED_4 | ADDRESS_LED_5 | ADDRESS_LED_6 | ADDRESS_LED_7;
+
+	switch(current_LED_grp_2){
+		case 0: LPC_GPIO0->SET = ADDRESS_LED_4;
+				break;
+		case 1: LPC_GPIO0->SET = ADDRESS_LED_5;
+				break;
+		case 2: LPC_GPIO0->SET = ADDRESS_LED_6;
+				break;
+		case 3: LPC_GPIO0->SET = ADDRESS_LED_7;
+				break;
 	}
-	else{
-		LPC_GPIO0->CLR = ADDRESS_LED_1;
-	}
+	current_LED_grp_2++;
+	current_LED_grp_2 %= LED_GROUP_SIZE;
+
 	yield();
 }
 
-void controll_led2(){
-	if (tick_counter < led_light_frequencies[2]){
-		LPC_GPIO0->SET = ADDRESS_LED_2;
-	}
-	else{
-		LPC_GPIO0->CLR = ADDRESS_LED_2;
-	}
+void idle_task(){
+	delayms(500);
 	yield();
 }
-
-void controll_led3(){
-	if (tick_counter < led_light_frequencies[3]){
-		LPC_GPIO0->SET = ADDRESS_LED_3;
-	}
-	else{
-		LPC_GPIO0->CLR = ADDRESS_LED_3;
-	}
-	yield();
-}
-
-void controll_led4(){
-	if (tick_counter < led_light_frequencies[4]){
-		LPC_GPIO0->SET = ADDRESS_LED_4;
-	}
-	else{
-		LPC_GPIO0->CLR = ADDRESS_LED_4;
-	}
-	yield();
-}
-
-void controll_led5(){
-	if (tick_counter < led_light_frequencies[5]){
-		LPC_GPIO0->SET = ADDRESS_LED_5;
-	}
-	else{
-		LPC_GPIO0->CLR = ADDRESS_LED_5;
-	}
-	yield();
-}
-
-void controll_led6(){
-	if (tick_counter < led_light_frequencies[6]){
-		LPC_GPIO0->SET = ADDRESS_LED_6;
-	}
-	else{
-		LPC_GPIO0->CLR = ADDRESS_LED_6;
-	}
-	yield();
-}
-
-void controll_led7(){
-	if (tick_counter < led_light_frequencies[7]){
-		LPC_GPIO0->SET = ADDRESS_LED_7;
-	}
-	else{
-		LPC_GPIO0->CLR = ADDRESS_LED_7;
-	}
-	yield();
-}
-
-/**
- * @brief Startet ein verschmiertes Lauflicht. Auf dem led board leuchtet, je nach gesetzter Geschwindigkeit, immer eine LED mit 100 % Staerke. 
- * Nach jedem Schritt leuchtet die vorherige LED mit 30 % weniger Staerke. Die prozentuale Staerke wird durch die H�ufigkeit der on/off-Zyklen bestimmt.
- */
-
-void smeared_running_light(){
-
-
-	
-	static uint32_t current_led;
-	static uint32_t b_is_initialized;
-
-	//start with LED 0	
-	if(led_counter == 0 && tick_counter == 0){																														
-		led_counter = 0;
-		b_is_initialized = 0;
-	}
-
-
-	
-	
-	//if counter for switching the leds and the counter for switching the power of the leds
-	if(led_counter % MAX_TICKS == 0 && tick_counter == 0){
-
-		//this if is to catch this first two unique steps
-		if(b_is_initialized && current_led < 2){
-			current_led = 2;
-		}		
-		
-		switch(current_led){
-			//case 0 will only be once
-			case 0:{		
-				led_light_frequencies[0] = 100;
-				break;
-			}
-			//case 1 will only be once
-			case 1:{
-				led_light_frequencies[0] = 70;
-				led_light_frequencies[1] = 100;
-				led_light_frequencies[2] = 0;
-				led_light_frequencies[3] = 0;
-				led_light_frequencies[4] = 0;
-				led_light_frequencies[5] = 0;
-				led_light_frequencies[6] = 0;
-				led_light_frequencies[7] = 0;
-				break;
-			}
-			case 2:{
-				led_light_frequencies[0] = 40;
-				led_light_frequencies[1] = 70;
-				led_light_frequencies[2] = 100;
-				led_light_frequencies[3] = 0;
-				led_light_frequencies[4] = 0;
-				led_light_frequencies[5] = 0;
-				led_light_frequencies[6] = 0;
-				led_light_frequencies[7] = 0;
-				b_is_initialized = 1;
-				break;
-			}
-			case 3:{
-				led_light_frequencies[0] = 10;
-				led_light_frequencies[1] = 40;
-				led_light_frequencies[2] = 70;
-				led_light_frequencies[3] = 100;
-				led_light_frequencies[4] = 0;
-				led_light_frequencies[5] = 0;
-				led_light_frequencies[6] = 0;
-				led_light_frequencies[7] = 0;
-				//10, 40, 70, 100, 0, 0, 0, 0
-				break;
-			}
-			case 4:{
-				led_light_frequencies[0] = 0;
-				led_light_frequencies[1] = 10;
-				led_light_frequencies[2] = 40;
-				led_light_frequencies[3] = 70;
-				led_light_frequencies[4] = 100;
-				led_light_frequencies[5] = 0;
-				led_light_frequencies[6] = 0;
-				led_light_frequencies[7] = 0;
-				//0, 10, 40, 70, 100, 0, 0, 0
-				break;
-			}
-			case 5:{
-				led_light_frequencies[0] = 0;
-				led_light_frequencies[1] = 0;
-				led_light_frequencies[2] = 10;
-				led_light_frequencies[3] = 40;
-				led_light_frequencies[4] = 700;
-				led_light_frequencies[5] = 100;
-				led_light_frequencies[6] = 0;
-				led_light_frequencies[7] = 0;
-				//0, 0, 10, 40, 70, 100, 0, 0
-				break;
-			}
-			case 6:{
-				led_light_frequencies[0] = 0;
-				led_light_frequencies[1] = 0;
-				led_light_frequencies[2] = 0;
-				led_light_frequencies[3] = 10;
-				led_light_frequencies[4] = 40;
-				led_light_frequencies[5] = 70;
-				led_light_frequencies[6] = 100;
-				led_light_frequencies[7] = 0;
-				//0, 0, 0, 10, 40, 70, 100, 0
-				break;
-			}
-			case 7:{
-				led_light_frequencies[0] = 0;
-				led_light_frequencies[1] = 0;
-				led_light_frequencies[2] = 0;
-				led_light_frequencies[3] = 0;
-				led_light_frequencies[4] = 10;
-				led_light_frequencies[5] = 40;
-				led_light_frequencies[6] = 70;
-				led_light_frequencies[7] = 100;
-				//0, 0, 0, 0, 10, 40, 70, 100
-				break;
-			}case 8:{
-				led_light_frequencies[0] = 0;
-				led_light_frequencies[1] = 0;
-				led_light_frequencies[2] = 0;
-				led_light_frequencies[3] = 0;
-				led_light_frequencies[4] = 0;
-				led_light_frequencies[5] = 10;
-				led_light_frequencies[6] = 100;
-				led_light_frequencies[7] = 70;
-				//0, 0, 0, 0, 0, 10, 100, 70
-				break;
-			}
-			case 9:{
-				led_light_frequencies[0] = 0;
-				led_light_frequencies[1] = 0;
-				led_light_frequencies[2] = 0;
-				led_light_frequencies[3] = 0;
-				led_light_frequencies[4] = 0;
-				led_light_frequencies[5] = 100;
-				led_light_frequencies[6] = 70;
-				led_light_frequencies[7] = 40;
-				//0, 0, 0, 0, 0, 100, 70, 40
-				break;
-			}
-			case 10:{
-				led_light_frequencies[0] = 0;
-				led_light_frequencies[1] = 0;
-				led_light_frequencies[2] = 0;
-				led_light_frequencies[3] = 0;
-				led_light_frequencies[4] = 100;
-				led_light_frequencies[5] = 70;
-				led_light_frequencies[6] = 40;
-				led_light_frequencies[7] = 10;
-				//0, 0, 0, 0, 100, 70, 40, 10
-				break;
-			}
-			case 11:{
-				led_light_frequencies[0] = 0;
-				led_light_frequencies[1] = 0;
-				led_light_frequencies[2] = 0;
-				led_light_frequencies[3] = 100;
-				led_light_frequencies[4] = 70;
-				led_light_frequencies[5] = 40;
-				led_light_frequencies[6] = 10;
-				led_light_frequencies[7] = 0;
-				//0, 0, 0, 100, 70, 40, 10, 0
-				break;
-			}
-			case 12:{
-				led_light_frequencies[0] = 0;
-				led_light_frequencies[1] = 0;
-				led_light_frequencies[2] = 100;
-				led_light_frequencies[3] = 70;
-				led_light_frequencies[4] = 40;
-				led_light_frequencies[5] = 10;
-				led_light_frequencies[6] = 0;
-				led_light_frequencies[7] = 0;
-				//0, 0, 100, 70, 40, 10, 0, 0
-				break;
-			}
-			case 13:{
-				led_light_frequencies[0] = 0;
-				led_light_frequencies[1] = 100;
-				led_light_frequencies[2] = 70;
-				led_light_frequencies[3] = 40;
-				led_light_frequencies[4] = 10;
-				led_light_frequencies[5] = 0;
-				led_light_frequencies[6] = 0;
-				led_light_frequencies[7] = 0;
-				//0, 100, 70, 40, 10, 0, 0, 0
-				break;
-			}
-			case 14:{
-				led_light_frequencies[0] = 100;
-				led_light_frequencies[1] = 70;
-				led_light_frequencies[2] = 40;
-				led_light_frequencies[3] = 10;
-				led_light_frequencies[4] = 0;
-				led_light_frequencies[5] = 0;
-				led_light_frequencies[6] = 0;
-				led_light_frequencies[7] = 0;
-				//100, 70, 40, 10, 0, 0, 0, 0
-				break;
-			}
-			case 15:{
-				led_light_frequencies[0] = 70;
-				led_light_frequencies[1] = 100;
-				led_light_frequencies[2] = 10;
-				led_light_frequencies[3] = 0;
-				led_light_frequencies[4] = 0;
-				led_light_frequencies[5] = 0;
-				led_light_frequencies[6] = 0;
-				led_light_frequencies[7] = 0;
-				//{70, 100, 10, 0, 0, 0, 0, 0
-				break;
-			}
-			default:{
-				//error handling
-				led_light_frequencies[0] = 100;
-				led_light_frequencies[1] = 100;
-				led_light_frequencies[2] = 100;
-				led_light_frequencies[3] = 100;
-				led_light_frequencies[4] = 100;
-				led_light_frequencies[5] = 100;
-				led_light_frequencies[6] = 100;
-				led_light_frequencies[7] = 100;
-				//100, 100, 100, 100, 100, 100, 100, 100
-				break;
-			}
-		}  //end switch cases
-		
-		current_led++;
-		current_led %= RUNNING_LIGHT_POS;
-
-	}	//end if led_counter % MAX_TICKS == 0 && tick_counter == 0
-	yield();
-} //end function smeared_running_light
-
-
-
 
 /**
  * @brief function to generate a new process
@@ -427,10 +134,6 @@ pid_t create(void (*p_function)(), int _remaining_runs){
 	//-1 to run all processes for ever
 	new_process.remaining_runs = _remaining_runs;
 
-
-	
-	
-
 	process_table[new_pid] = new_process;
 
 	return new_pid;
@@ -442,7 +145,6 @@ pid_t create(void (*p_function)(), int _remaining_runs){
  * @param _pid 
  * @return result_t number for errorhandling
  */
-
 result_t destroy(pid_t _pid){
 	if(process_table[_pid].status == terminated){
         process_table[_pid].status = zombie;
@@ -462,33 +164,8 @@ result_t destroy(pid_t _pid){
 		return 4;
 }
 
-/**
- * @brief call the function of all processes which are in the process table
- * 
- */
-void run_all_processes(){
-		for (int _pid = 0; _pid < PROCESS_COUNT; _pid++){                                               
-			 if(process_table[_pid].status == ready){
-					//run process
-					if(process_table[_pid].remaining_runs > 0 || process_table[_pid].remaining_runs == -1){
-						
-						if(process_table[_pid].remaining_runs > 0){
-							//decrement the remaining_runs
-							process_table[_pid].remaining_runs--;
-						}
-						(*process_table[_pid].task)();			
-					}
-					else{
-						process_table[_pid].status = terminated;
-						destroy(_pid);
-					}
-			  }	
-     	}
-	 }	
-
-
 //array of all function pointers to all processes
-void (*tasklist[PROCESS_COUNT])() = {controll_led0, controll_led1, controll_led2, controll_led3, controll_led4, controll_led5, controll_led6, controll_led7,  smeared_running_light};
+void (*tasklist[PROCESS_COUNT])() = {controll_led_grp_1, controll_led_grp_2, idle_task};
 
 
 /**
@@ -498,8 +175,8 @@ void (*tasklist[PROCESS_COUNT])() = {controll_led0, controll_led1, controll_led2
 void register_all_processes(){
 	for (int currTask = 0; currTask < PROCESS_COUNT; currTask++){	
 		create(tasklist[currTask], -1);
-		process_table[currTask].p_stack_pointer = &stack[currTask][31];
-		first_context(process_table[currTask].p_stack_pointer, process_table[currTask].task);
+		process_table[currTask].p_stack_pointer = &stack[currTask][22];
+		process_table[currTask].p_stack_pointer[10] = process_table[currTask].task;
 	}
 }		
 	
@@ -520,31 +197,16 @@ void clear_process_table(){
 void HardFault_Handler(void){
 	while (1) {
 		LPC_GPIO0->SET = 0xFFFFFFFF;
-		//TODO: Implement some debugg tools
+		//TODO: Implement some debug tools
 	}
 }
 
 int main(void){
-
-
 	init();
 	register_all_processes();
-	yield();
-	while(1){
-		
-		
-		
-
-		//TODO: use processor timers for a more accurate result
-		tick_counter++;
-		//to make sure that the value of tickcounter is between 0 and 100
-		tick_counter %= 100;													
-		if(tick_counter == 0){													
-			led_counter++;
-		}																													
-}
+	first_context(process_table[0].p_stack_pointer);
+	while(1){																								
+	}
 		//could be use for implementing shutdown feature for the operating system
 		//clear_process_table();
 }
-
-
