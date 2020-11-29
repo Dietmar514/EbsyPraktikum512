@@ -14,18 +14,19 @@ ARM Macro Assembler    Page 1
     7 00000000 4685            MOV              sp, r0
     8 00000002 B500            PUSH             {lr}
     9 00000004 E92D 1FF0       PUSH             {r4-r12}
-   10 00000008         
-   11 00000008 468D            MOV              sp, r1
-   12 0000000A E8BD 1FF0       POP              {r4-r12}
-   13 0000000E BD00            POP              {pc}
-   14 00000010 4770            BX               LR
-   15 00000012                 ENDP
-   16 00000012                 END
+   10 00000008 F8C0 D000       STR              sp, [r0]
+   11 0000000C         
+   12 0000000C 468D            MOV              sp, r1
+   13 0000000E E8BD 1FF0       POP              {r4-r12}
+   14 00000012 BD00            POP              {pc}
+   15 00000014 4770            BX               LR
+   16 00000016                 ENDP
+   17 00000016                 END
 Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M3 --apcs=interw
 ork --depend=.\objects\switch_context.d -o.\objects\switch_context.o -IC:\Keil_
 v5\ARM\RV31\INC -IC:\Keil_v5\ARM\CMSIS\Include -IC:\Keil_v5\ARM\INC\NXP\LPC177x
-_8x --predefine="__UVISION_VERSION SETA 529" --list=.\listings\switch_context.l
-st switch_context.s
+_8x --predefine="__EVAL SETA 1" --predefine="__UVISION_VERSION SETA 529" --list
+=.\listings\switch_context.lst switch_context.s
 
 
 
@@ -49,4 +50,4 @@ Symbol: switch_context
       At line 5 in file switch_context.s
 Comment: switch_context used once
 2 symbols
-333 symbols in table
+334 symbols in table

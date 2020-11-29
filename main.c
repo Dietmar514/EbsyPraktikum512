@@ -74,6 +74,7 @@ void yield(){
 
 void controll_led_grp_1(){	
 
+	while(1){
 	LPC_GPIO0->CLR = ADDRESS_LED_0 | ADDRESS_LED_1 | ADDRESS_LED_2 | ADDRESS_LED_3;
 
 	switch(current_LED_grp_1){
@@ -90,10 +91,14 @@ void controll_led_grp_1(){
 	current_LED_grp_1++;
 	current_LED_grp_1 %= LED_GROUP_SIZE;
 
+
 	yield();
+}
 }
 
 void controll_led_grp_2(){
+	
+	while(1){
 
 	LPC_GPIO0->CLR = ADDRESS_LED_4 | ADDRESS_LED_5 | ADDRESS_LED_6 | ADDRESS_LED_7;
 
@@ -112,10 +117,14 @@ void controll_led_grp_2(){
 
 	yield();
 }
+}
 
 void idle_task(){
-	delayms(500);
-	yield();
+	
+	while(1){
+		//delayms(500);
+		yield();
+	}
 }
 
 /**
@@ -176,9 +185,11 @@ void register_all_processes(){
 	for (int currTask = 0; currTask < PROCESS_COUNT; currTask++){	
 		create(tasklist[currTask], -1);
 		process_table[currTask].p_stack_pointer = &stack[currTask][22];
-		process_table[currTask].p_stack_pointer[10] = process_table[currTask].task;
+		*(process_table[currTask].p_stack_pointer + 9) = (uint32_t) process_table[currTask].task;
 	}
-}		
+}
+
+
 	
 	
 /**

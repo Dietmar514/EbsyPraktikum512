@@ -103,7 +103,7 @@ Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M3 --apcs=interw
 ork --depend=.\objects\delay.d -o.\objects\delay.o -IC:\Keil_v5\ARM\RV31\INC -I
 C:\Keil_v5\ARM\CMSIS\Include -IC:\Keil_v5\ARM\INC\NXP\LPC177x_8x --predefine="_
 _EVAL SETA 1" --predefine="__UVISION_VERSION SETA 529" --list=.\listings\delay.
-lst ..\..\Basisprojekt\delay.s
+lst delay.s
 
 
 
@@ -114,7 +114,7 @@ DELAY 00000000
 
 Symbol: DELAY
    Definitions
-      At line 31 in file ..\..\Basisprojekt\delay.s
+      At line 31 in file delay.s
    Uses
       None
 Comment: DELAY unused
@@ -122,25 +122,25 @@ _D1 00000002
 
 Symbol: _D1
    Definitions
-      At line 40 in file ..\..\Basisprojekt\delay.s
+      At line 40 in file delay.s
    Uses
-      At line 51 in file ..\..\Basisprojekt\delay.s
+      At line 51 in file delay.s
 Comment: _D1 used once
 _D2 00000006
 
 Symbol: _D2
    Definitions
-      At line 42 in file ..\..\Basisprojekt\delay.s
+      At line 42 in file delay.s
    Uses
-      At line 46 in file ..\..\Basisprojekt\delay.s
+      At line 46 in file delay.s
 Comment: _D2 used once
 delayms 00000000
 
 Symbol: delayms
    Definitions
-      At line 36 in file ..\..\Basisprojekt\delay.s
+      At line 36 in file delay.s
    Uses
-      At line 37 in file ..\..\Basisprojekt\delay.s
+      At line 37 in file delay.s
 Comment: delayms used once
 4 symbols
 336 symbols in table

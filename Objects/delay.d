@@ -1,1 +1,1 @@
-.\objects\delay.o: ..\..\Basisprojekt\delay.s
+.\objects\delay.o: delay.s
