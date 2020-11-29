@@ -29,7 +29,7 @@ enum e_status{
 	ready,
 	blocked,
 	terminated,
-  	zombie
+  zombie
 };
 
 struct s_process{
@@ -75,54 +75,62 @@ void yield(){
 void controll_led_grp_1(){	
 
 	while(1){
-	LPC_GPIO0->CLR = ADDRESS_LED_0 | ADDRESS_LED_1 | ADDRESS_LED_2 | ADDRESS_LED_3;
+		LPC_GPIO0->CLR = ADDRESS_LED_0 | ADDRESS_LED_1 | ADDRESS_LED_2 | ADDRESS_LED_3;
 
-	switch(current_LED_grp_1){
-		case 0: LPC_GPIO0->SET = ADDRESS_LED_0;
-				break;
-		case 1: LPC_GPIO0->SET = ADDRESS_LED_1;
-				break;
-		case 2: LPC_GPIO0->SET = ADDRESS_LED_2;
-				break;
-		case 3: LPC_GPIO0->SET = ADDRESS_LED_3;
-				break;
+		switch(current_LED_grp_1){
+			case 0: LPC_GPIO0->SET = ADDRESS_LED_0;
+					break;
+			case 1: LPC_GPIO0->SET = ADDRESS_LED_1;
+					break;
+			case 2: LPC_GPIO0->SET = ADDRESS_LED_2;
+					break;
+			case 3: LPC_GPIO0->SET = ADDRESS_LED_3;
+					break;
+			
+			//Errorhandling
+			default:LPC_GPIO0->SET = 0xFFFFFFFF;
+					break;
+		}
+
+		current_LED_grp_1++;
+		current_LED_grp_1 %= LED_GROUP_SIZE;
+
+		yield();
 	}
-
-	current_LED_grp_1++;
-	current_LED_grp_1 %= LED_GROUP_SIZE;
-
-
-	yield();
-}
 }
 
 void controll_led_grp_2(){
 	
 	while(1){
 
-	LPC_GPIO0->CLR = ADDRESS_LED_4 | ADDRESS_LED_5 | ADDRESS_LED_6 | ADDRESS_LED_7;
+		LPC_GPIO0->CLR = ADDRESS_LED_4 | ADDRESS_LED_5 | ADDRESS_LED_6 | ADDRESS_LED_7;
 
-	switch(current_LED_grp_2){
-		case 0: LPC_GPIO0->SET = ADDRESS_LED_4;
-				break;
-		case 1: LPC_GPIO0->SET = ADDRESS_LED_5;
-				break;
-		case 2: LPC_GPIO0->SET = ADDRESS_LED_6;
-				break;
-		case 3: LPC_GPIO0->SET = ADDRESS_LED_7;
-				break;
+		switch(current_LED_grp_2){
+			case 0:	LPC_GPIO0->SET = ADDRESS_LED_4;
+					break;
+			case 1:	LPC_GPIO0->SET = ADDRESS_LED_5;
+					break;
+			case 2:	LPC_GPIO0->SET = ADDRESS_LED_6;
+					break;
+			case 3:	LPC_GPIO0->SET = ADDRESS_LED_7;
+					break;
+			
+			//Errorhandling
+			default:LPC_GPIO0->SET = 0xFFFFFFFF;
+					break;
+		}
+		
+		current_LED_grp_2++;
+		current_LED_grp_2 %= LED_GROUP_SIZE;
+
+		yield();
 	}
-	current_LED_grp_2++;
-	current_LED_grp_2 %= LED_GROUP_SIZE;
-
-	yield();
-}
 }
 
 void idle_task(){
 	
 	while(1){
-		//delayms(500);
+		delayms(500);
 		yield();
 	}
 }
@@ -155,7 +163,7 @@ pid_t create(void (*p_function)(), int _remaining_runs){
  * @return result_t number for errorhandling
  */
 result_t destroy(pid_t _pid){
-	if(process_table[_pid].status == terminated){
+		if(process_table[_pid].status == terminated){
         process_table[_pid].status = zombie;
         return 0;
     }
@@ -164,7 +172,7 @@ result_t destroy(pid_t _pid){
     if(process_table[_pid].status == ready){      
         return 1;
     }
-        if(process_table[_pid].status == blocked){
+    if(process_table[_pid].status == blocked){
         return 2;
     }
     if(process_table[_pid].status == running){   
@@ -208,7 +216,7 @@ void clear_process_table(){
 void HardFault_Handler(void){
 	while (1) {
 		LPC_GPIO0->SET = 0xFFFFFFFF;
-		//TODO: Implement some debug tools
+		//TODO: implement some debug infos
 	}
 }
 
@@ -216,8 +224,7 @@ int main(void){
 	init();
 	register_all_processes();
 	first_context(process_table[0].p_stack_pointer);
-	while(1){																								
+	while(1){
+			//should never be hear
 	}
-		//could be use for implementing shutdown feature for the operating system
-		//clear_process_table();
 }
