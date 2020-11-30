@@ -18,9 +18,12 @@ typedef uint32_t result_t;
 #define LED_GROUP_SIZE 4
 
 uint32_t current_process = 0;
+uint32_t next_process = 0;
 pid_t global_pid = 0;
 uint8_t current_LED_grp_1 = 0;
 uint8_t current_LED_grp_2 = 0;
+
+uint8_t test_counter = 0;
 
 uint32_t stack[PROCESS_COUNT][32];
 
@@ -62,13 +65,31 @@ pid_t get_new_pid(){
 }
 
 
-void yield(){
-	process_table[current_process].status = terminated;
-	current_process %= PROCESS_COUNT;
-	uint32_t next_process = ((current_process + 1) % PROCESS_COUNT);
-	process_table[next_process].status = running;
+/**
+ * @brief default function to destroy a terminated process
+ * 
+ * @param _pid 
+ * @return result_t number for errorhandling
+ */
+result_t destroy(pid_t _pid){
+		process_table[_pid].status = terminated;
+		return 0;
+}
 
+void yield(){
+	
+	current_process %= PROCESS_COUNT;
+	next_process = ((current_process + 1) % PROCESS_COUNT);
+	
+	while(process_table[next_process].status == terminated){
+		current_process++;
+		current_process %= PROCESS_COUNT;
+		next_process = ((current_process + 1) % PROCESS_COUNT);
+	}
 	switch_context(process_table[current_process++].p_stack_pointer, process_table[next_process].p_stack_pointer);
+	
+	
+	
 }
 
 
@@ -76,7 +97,7 @@ void controll_led_grp_1(){
 
 	while(1){
 		LPC_GPIO0->CLR = ADDRESS_LED_0 | ADDRESS_LED_1 | ADDRESS_LED_2 | ADDRESS_LED_3;
-
+		
 		switch(current_LED_grp_1){
 			case 0: LPC_GPIO0->SET = ADDRESS_LED_0;
 					break;
@@ -91,7 +112,7 @@ void controll_led_grp_1(){
 			default:LPC_GPIO0->SET = 0xFFFFFFFF;
 					break;
 		}
-
+		
 		current_LED_grp_1++;
 		current_LED_grp_1 %= LED_GROUP_SIZE;
 
@@ -104,7 +125,7 @@ void controll_led_grp_2(){
 	while(1){
 
 		LPC_GPIO0->CLR = ADDRESS_LED_4 | ADDRESS_LED_5 | ADDRESS_LED_6 | ADDRESS_LED_7;
-
+		
 		switch(current_LED_grp_2){
 			case 0:	LPC_GPIO0->SET = ADDRESS_LED_4;
 					break;
@@ -131,6 +152,10 @@ void idle_task(){
 	
 	while(1){
 		delayms(500);
+		test_counter++;
+		if(test_counter == 8){
+			destroy(0);
+		}
 		yield();
 	}
 }
@@ -156,30 +181,7 @@ pid_t create(void (*p_function)(), int _remaining_runs){
 	return new_pid;
 }
 
-/**
- * @brief default function to destroy a terminated process
- * 
- * @param _pid 
- * @return result_t number for errorhandling
- */
-result_t destroy(pid_t _pid){
-		if(process_table[_pid].status == terminated){
-        process_table[_pid].status = zombie;
-        return 0;
-    }
 
-		//Errorhandling
-    if(process_table[_pid].status == ready){      
-        return 1;
-    }
-    if(process_table[_pid].status == blocked){
-        return 2;
-    }
-    if(process_table[_pid].status == running){   
-        return 3;
-    }
-		return 4;
-}
 
 //array of all function pointers to all processes
 void (*tasklist[PROCESS_COUNT])() = {controll_led_grp_1, controll_led_grp_2, idle_task};
@@ -225,6 +227,6 @@ int main(void){
 	register_all_processes();
 	first_context(process_table[0].p_stack_pointer);
 	while(1){
-			//should never be hear
+			//should never be here
 	}
 }

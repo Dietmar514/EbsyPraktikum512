@@ -29,7 +29,9 @@ Section Cross References
     main.o(i.destroy) refers to main.o(.bss) for process_table
     main.o(i.get_new_pid) refers to main.o(.data) for global_pid
     main.o(i.idle_task) refers to delay.o(DELAY) for delayms
+    main.o(i.idle_task) refers to main.o(i.destroy) for destroy
     main.o(i.idle_task) refers to main.o(i.yield) for yield
+    main.o(i.idle_task) refers to main.o(.data) for test_counter
     main.o(i.main) refers to main.o(i.init) for init
     main.o(i.main) refers to main.o(i.register_all_processes) for register_all_processes
     main.o(i.main) refers to first_context.o(asmcode) for first_context
@@ -154,9 +156,8 @@ Removing Unused input sections from the image.
     Removing main.o(.rev16_text), (4 bytes).
     Removing main.o(.revsh_text), (4 bytes).
     Removing main.o(i.clear_process_table), (40 bytes).
-    Removing main.o(i.destroy), (100 bytes).
 
-8 unused section(s) (total 996 bytes) removed from the image.
+7 unused section(s) (total 896 bytes) removed from the image.
 
 ==============================================================================
 
@@ -167,51 +168,51 @@ Image Symbol Table
     Symbol Name                              Value     Ov Type        Size  Object(Section)
 
     RESET                                    0x00000000   Section      228  startup_lpc177x_8x.o(RESET)
-    ../clib/angel/boardlib.s                 0x00000000   Number         0  boardshut.o ABSOLUTE
-    ../clib/angel/boardlib.s                 0x00000000   Number         0  boardinit3.o ABSOLUTE
-    ../clib/angel/boardlib.s                 0x00000000   Number         0  boardinit1.o ABSOLUTE
     ../clib/angel/boardlib.s                 0x00000000   Number         0  boardinit2.o ABSOLUTE
+    ../clib/angel/boardlib.s                 0x00000000   Number         0  boardshut.o ABSOLUTE
+    ../clib/angel/boardlib.s                 0x00000000   Number         0  boardinit1.o ABSOLUTE
+    ../clib/angel/boardlib.s                 0x00000000   Number         0  boardinit3.o ABSOLUTE
     ../clib/angel/handlers.s                 0x00000000   Number         0  __scatter_zi.o ABSOLUTE
     ../clib/angel/handlers.s                 0x00000000   Number         0  __scatter_copy.o ABSOLUTE
     ../clib/angel/kernel.s                   0x00000000   Number         0  rtexit2.o ABSOLUTE
-    ../clib/angel/kernel.s                   0x00000000   Number         0  __rtentry4.o ABSOLUTE
+    ../clib/angel/kernel.s                   0x00000000   Number         0  rtexit.o ABSOLUTE
     ../clib/angel/kernel.s                   0x00000000   Number         0  __rtentry2.o ABSOLUTE
     ../clib/angel/kernel.s                   0x00000000   Number         0  __rtentry.o ABSOLUTE
-    ../clib/angel/kernel.s                   0x00000000   Number         0  rtexit.o ABSOLUTE
+    ../clib/angel/kernel.s                   0x00000000   Number         0  __rtentry4.o ABSOLUTE
     ../clib/angel/rt.s                       0x00000000   Number         0  rt_raise.o ABSOLUTE
     ../clib/angel/scatter.s                  0x00000000   Number         0  __scatter.o ABSOLUTE
     ../clib/angel/startup.s                  0x00000000   Number         0  __main.o ABSOLUTE
-    ../clib/angel/sys.s                      0x00000000   Number         0  libspace.o ABSOLUTE
     ../clib/angel/sys.s                      0x00000000   Number         0  sys_stackheap_outer.o ABSOLUTE
     ../clib/angel/sys.s                      0x00000000   Number         0  use_no_semi.o ABSOLUTE
     ../clib/angel/sys.s                      0x00000000   Number         0  indicate_semi.o ABSOLUTE
-    ../clib/angel/sysapp.c                   0x00000000   Number         0  sys_exit.o ABSOLUTE
-    ../clib/angel/sysapp.c                   0x00000000   Number         0  sys_command.o ABSOLUTE
+    ../clib/angel/sys.s                      0x00000000   Number         0  libspace.o ABSOLUTE
     ../clib/angel/sysapp.c                   0x00000000   Number         0  sys_wrch.o ABSOLUTE
+    ../clib/angel/sysapp.c                   0x00000000   Number         0  sys_command.o ABSOLUTE
+    ../clib/angel/sysapp.c                   0x00000000   Number         0  sys_exit.o ABSOLUTE
     ../clib/armsys.c                         0x00000000   Number         0  argv_veneer.o ABSOLUTE
     ../clib/armsys.c                         0x00000000   Number         0  argv_veneer.o ABSOLUTE
-    ../clib/armsys.c                         0x00000000   Number         0  _get_argv_nomalloc.o ABSOLUTE
     ../clib/armsys.c                         0x00000000   Number         0  no_argv.o ABSOLUTE
+    ../clib/armsys.c                         0x00000000   Number         0  _get_argv_nomalloc.o ABSOLUTE
     ../clib/heapalloc.c                      0x00000000   Number         0  hrguard.o ABSOLUTE
     ../clib/heapaux.c                        0x00000000   Number         0  heapauxi.o ABSOLUTE
     ../clib/libinit.s                        0x00000000   Number         0  libinit2.o ABSOLUTE
-    ../clib/libinit.s                        0x00000000   Number         0  libinit.o ABSOLUTE
-    ../clib/libinit.s                        0x00000000   Number         0  libshutdown.o ABSOLUTE
     ../clib/libinit.s                        0x00000000   Number         0  libshutdown2.o ABSOLUTE
+    ../clib/libinit.s                        0x00000000   Number         0  libshutdown.o ABSOLUTE
+    ../clib/libinit.s                        0x00000000   Number         0  libinit.o ABSOLUTE
     ../clib/memcpset.s                       0x00000000   Number         0  rt_memcpy_w.o ABSOLUTE
     ../clib/signal.c                         0x00000000   Number         0  defsig_exit.o ABSOLUTE
     ../clib/signal.c                         0x00000000   Number         0  defsig_general.o ABSOLUTE
     ../clib/signal.c                         0x00000000   Number         0  defsig_rtmem_formal.o ABSOLUTE
-    ../clib/signal.c                         0x00000000   Number         0  defsig_abrt_inner.o ABSOLUTE
     ../clib/signal.c                         0x00000000   Number         0  defsig_rtmem_outer.o ABSOLUTE
-    ../clib/signal.c                         0x00000000   Number         0  defsig_rtred_inner.o ABSOLUTE
-    ../clib/signal.c                         0x00000000   Number         0  defsig_stak_inner.o ABSOLUTE
     ../clib/signal.c                         0x00000000   Number         0  __raise.o ABSOLUTE
-    ../clib/signal.c                         0x00000000   Number         0  defsig_pvfn_inner.o ABSOLUTE
-    ../clib/signal.c                         0x00000000   Number         0  defsig_cppl_inner.o ABSOLUTE
-    ../clib/signal.c                         0x00000000   Number         0  defsig_segv_inner.o ABSOLUTE
     ../clib/signal.c                         0x00000000   Number         0  defsig_other.o ABSOLUTE
+    ../clib/signal.c                         0x00000000   Number         0  defsig_segv_inner.o ABSOLUTE
+    ../clib/signal.c                         0x00000000   Number         0  defsig_cppl_inner.o ABSOLUTE
+    ../clib/signal.c                         0x00000000   Number         0  defsig_pvfn_inner.o ABSOLUTE
+    ../clib/signal.c                         0x00000000   Number         0  defsig_stak_inner.o ABSOLUTE
     ../clib/signal.c                         0x00000000   Number         0  defsig_fpe_inner.o ABSOLUTE
+    ../clib/signal.c                         0x00000000   Number         0  defsig_abrt_inner.o ABSOLUTE
+    ../clib/signal.c                         0x00000000   Number         0  defsig_rtred_inner.o ABSOLUTE
     ../clib/signal.c                         0x00000000   Number         0  defsig_rtmem_inner.o ABSOLUTE
     ../clib/signal.s                         0x00000000   Number         0  defsig.o ABSOLUTE
     ../clib/stdlib.c                         0x00000000   Number         0  exit.o ABSOLUTE
@@ -289,15 +290,16 @@ Image Symbol Table
     i.controll_led_grp_1                     0x000003d8   Section        0  main.o(i.controll_led_grp_1)
     i.controll_led_grp_2                     0x00000454   Section        0  main.o(i.controll_led_grp_2)
     i.create                                 0x000004d0   Section        0  main.o(i.create)
-    i.get_new_pid                            0x00000518   Section        0  main.o(i.get_new_pid)
-    i.idle_task                              0x0000052c   Section        0  main.o(i.idle_task)
-    i.init                                   0x0000053c   Section        0  main.o(i.init)
-    i.main                                   0x0000054c   Section        0  main.o(i.main)
-    i.register_all_processes                 0x00000564   Section        0  main.o(i.register_all_processes)
-    i.yield                                  0x000005b8   Section        0  main.o(i.yield)
-    .data                                    0x10000000   Section       24  main.o(.data)
-    .bss                                     0x10000018   Section      444  main.o(.bss)
-    .bss                                     0x100001d4   Section       96  libspace.o(.bss)
+    i.destroy                                0x00000518   Section        0  main.o(i.destroy)
+    i.get_new_pid                            0x00000530   Section        0  main.o(i.get_new_pid)
+    i.idle_task                              0x00000544   Section        0  main.o(i.idle_task)
+    i.init                                   0x00000570   Section        0  main.o(i.init)
+    i.main                                   0x00000580   Section        0  main.o(i.main)
+    i.register_all_processes                 0x00000598   Section        0  main.o(i.register_all_processes)
+    i.yield                                  0x000005ec   Section        0  main.o(i.yield)
+    .data                                    0x10000000   Section       28  main.o(.data)
+    .bss                                     0x1000001c   Section      444  main.o(.bss)
+    .bss                                     0x100001d8   Section       96  libspace.o(.bss)
     HEAP                                     0x10000238   Section     1024  startup_lpc177x_8x.o(HEAP)
     Heap_Mem                                 0x10000238   Data        1024  startup_lpc177x_8x.o(HEAP)
     STACK                                    0x10000638   Section      512  startup_lpc177x_8x.o(STACK)
@@ -462,23 +464,26 @@ Image Symbol Table
     controll_led_grp_1                       0x000003d9   Thumb Code   116  main.o(i.controll_led_grp_1)
     controll_led_grp_2                       0x00000455   Thumb Code   116  main.o(i.controll_led_grp_2)
     create                                   0x000004d1   Thumb Code    68  main.o(i.create)
-    get_new_pid                              0x00000519   Thumb Code    14  main.o(i.get_new_pid)
-    idle_task                                0x0000052d   Thumb Code    16  main.o(i.idle_task)
-    init                                     0x0000053d   Thumb Code    12  main.o(i.init)
-    main                                     0x0000054d   Thumb Code    20  main.o(i.main)
-    register_all_processes                   0x00000565   Thumb Code    70  main.o(i.register_all_processes)
-    yield                                    0x000005b9   Thumb Code   110  main.o(i.yield)
-    Region$$Table$$Base                      0x00000630   Number         0  anon$$obj.o(Region$$Table)
-    Region$$Table$$Limit                     0x00000650   Number         0  anon$$obj.o(Region$$Table)
+    destroy                                  0x00000519   Thumb Code    20  main.o(i.destroy)
+    get_new_pid                              0x00000531   Thumb Code    14  main.o(i.get_new_pid)
+    idle_task                                0x00000545   Thumb Code    40  main.o(i.idle_task)
+    init                                     0x00000571   Thumb Code    12  main.o(i.init)
+    main                                     0x00000581   Thumb Code    20  main.o(i.main)
+    register_all_processes                   0x00000599   Thumb Code    70  main.o(i.register_all_processes)
+    yield                                    0x000005ed   Thumb Code   156  main.o(i.yield)
+    Region$$Table$$Base                      0x00000694   Number         0  anon$$obj.o(Region$$Table)
+    Region$$Table$$Limit                     0x000006b4   Number         0  anon$$obj.o(Region$$Table)
     current_process                          0x10000000   Data           4  main.o(.data)
-    global_pid                               0x10000004   Data           4  main.o(.data)
-    current_LED_grp_1                        0x10000008   Data           1  main.o(.data)
-    current_LED_grp_2                        0x10000009   Data           1  main.o(.data)
-    tasklist                                 0x1000000c   Data          12  main.o(.data)
-    stack                                    0x10000018   Data         384  main.o(.bss)
-    process_table                            0x10000198   Data          60  main.o(.bss)
-    __libspace_start                         0x100001d4   Data          96  libspace.o(.bss)
-    __temporary_stack_top$libspace           0x10000234   Data           0  libspace.o(.bss)
+    next_process                             0x10000004   Data           4  main.o(.data)
+    global_pid                               0x10000008   Data           4  main.o(.data)
+    current_LED_grp_1                        0x1000000c   Data           1  main.o(.data)
+    current_LED_grp_2                        0x1000000d   Data           1  main.o(.data)
+    test_counter                             0x1000000e   Data           1  main.o(.data)
+    tasklist                                 0x10000010   Data          12  main.o(.data)
+    stack                                    0x1000001c   Data         384  main.o(.bss)
+    process_table                            0x1000019c   Data          60  main.o(.bss)
+    __libspace_start                         0x100001d8   Data          96  libspace.o(.bss)
+    __temporary_stack_top$libspace           0x10000238   Data           0  libspace.o(.bss)
 
 
 
@@ -488,9 +493,9 @@ Memory Map of the image
 
   Image Entry point : 0x000000e5
 
-  Load Region LR_IROM1 (Base: 0x00000000, Size: 0x00000668, Max: 0x00080000, ABSOLUTE)
+  Load Region LR_IROM1 (Base: 0x00000000, Size: 0x000006d0, Max: 0x00080000, ABSOLUTE)
 
-    Execution Region ER_IROM1 (Exec base: 0x00000000, Load base: 0x00000000, Size: 0x00000650, Max: 0x00080000, ABSOLUTE)
+    Execution Region ER_IROM1 (Exec base: 0x00000000, Load base: 0x00000000, Size: 0x000006b4, Max: 0x00080000, ABSOLUTE)
 
     Exec Addr    Load Addr    Size         Type   Attr      Idx    E Section Name        Object
 
@@ -565,23 +570,23 @@ Memory Map of the image
     0x000003d8   0x000003d8   0x0000007c   Code   RO           72    i.controll_led_grp_1  main.o
     0x00000454   0x00000454   0x0000007c   Code   RO           73    i.controll_led_grp_2  main.o
     0x000004d0   0x000004d0   0x00000048   Code   RO           74    i.create            main.o
-    0x00000518   0x00000518   0x00000014   Code   RO           76    i.get_new_pid       main.o
-    0x0000052c   0x0000052c   0x00000010   Code   RO           77    i.idle_task         main.o
-    0x0000053c   0x0000053c   0x00000010   Code   RO           78    i.init              main.o
-    0x0000054c   0x0000054c   0x00000018   Code   RO           79    i.main              main.o
-    0x00000564   0x00000564   0x00000054   Code   RO           80    i.register_all_processes  main.o
-    0x000005b8   0x000005b8   0x00000078   Code   RO           81    i.yield             main.o
-    0x00000630   0x00000630   0x00000020   Data   RO          338    Region$$Table       anon$$obj.o
+    0x00000518   0x00000518   0x00000018   Code   RO           75    i.destroy           main.o
+    0x00000530   0x00000530   0x00000014   Code   RO           76    i.get_new_pid       main.o
+    0x00000544   0x00000544   0x0000002c   Code   RO           77    i.idle_task         main.o
+    0x00000570   0x00000570   0x00000010   Code   RO           78    i.init              main.o
+    0x00000580   0x00000580   0x00000018   Code   RO           79    i.main              main.o
+    0x00000598   0x00000598   0x00000054   Code   RO           80    i.register_all_processes  main.o
+    0x000005ec   0x000005ec   0x000000a8   Code   RO           81    i.yield             main.o
+    0x00000694   0x00000694   0x00000020   Data   RO          338    Region$$Table       anon$$obj.o
 
 
-    Execution Region RW_IRAM1 (Exec base: 0x10000000, Load base: 0x00000650, Size: 0x00000838, Max: 0x00010000, ABSOLUTE)
+    Execution Region RW_IRAM1 (Exec base: 0x10000000, Load base: 0x000006b4, Size: 0x00000838, Max: 0x00010000, ABSOLUTE)
 
     Exec Addr    Load Addr    Size         Type   Attr      Idx    E Section Name        Object
 
-    0x10000000   0x00000650   0x00000018   Data   RW           83    .data               main.o
-    0x10000018        -       0x000001bc   Zero   RW           82    .bss                main.o
-    0x100001d4        -       0x00000060   Zero   RW          212    .bss                c_w.l(libspace.o)
-    0x10000234   0x00000668   0x00000004   PAD
+    0x10000000   0x000006b4   0x0000001c   Data   RW           83    .data               main.o
+    0x1000001c        -       0x000001bc   Zero   RW           82    .bss                main.o
+    0x100001d8        -       0x00000060   Zero   RW          212    .bss                c_w.l(libspace.o)
     0x10000238        -       0x00000400   Zero   RW            2    HEAP                startup_lpc177x_8x.o
     0x10000638        -       0x00000200   Zero   RW            1    STACK               startup_lpc177x_8x.o
 
@@ -594,15 +599,15 @@ Image component sizes
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   Object Name
 
          0          0          0          0          0       4508   core_cm3.o
-        32          0          0          0          0        336   delay.o
-        10          0          0          0          0        348   first_context.o
-       616         62          0         24        444       6066   main.o
-        68         30        228          0       1536       1044   startup_lpc177x_8x.o
-        22          0          0          0          0        352   switch_context.o
-       216         12          0          0          0        525   system_lpc177x_8x.o
+        32          0          0          0          0        308   delay.o
+        10          0          0          0          0        316   first_context.o
+       716         72          0         28        444       6226   main.o
+        68         30        228          0       1536        988   startup_lpc177x_8x.o
+        22          0          0          0          0        324   switch_context.o
+       216         12          0          0          0        497   system_lpc177x_8x.o
 
     ----------------------------------------------------------------------
-       976        112        260         24       1980      13179   Object Totals
+      1076        122        260         28       1980      13167   Object Totals
          0          0         32          0          0          0   (incl. Generated)
         12          8          0          0          0          0   (incl. Padding)
 
@@ -633,8 +638,8 @@ Image component sizes
          2          0          0          0          0         68   use_no_semi.o
 
     ----------------------------------------------------------------------
-       380         16          0          0        100        664   Library Totals
-         8          0          0          0          4          0   (incl. Padding)
+       380         16          0          0         96        664   Library Totals
+         8          0          0          0          0          0   (incl. Padding)
 
     ----------------------------------------------------------------------
 
@@ -643,7 +648,7 @@ Image component sizes
        372         16          0          0         96        664   c_w.l
 
     ----------------------------------------------------------------------
-       380         16          0          0        100        664   Library Totals
+       380         16          0          0         96        664   Library Totals
 
     ----------------------------------------------------------------------
 
@@ -652,15 +657,15 @@ Image component sizes
 
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   
 
-      1356        128        260         24       2080      13059   Grand Totals
-      1356        128        260         24       2080      13059   ELF Image Totals
-      1356        128        260         24          0          0   ROM Totals
+      1456        138        260         28       2076      12995   Grand Totals
+      1456        138        260         28       2076      12995   ELF Image Totals
+      1456        138        260         28          0          0   ROM Totals
 
 ==============================================================================
 
-    Total RO  Size (Code + RO Data)                 1616 (   1.58kB)
+    Total RO  Size (Code + RO Data)                 1716 (   1.68kB)
     Total RW  Size (RW Data + ZI Data)              2104 (   2.05kB)
-    Total ROM Size (Code + RO Data + RW Data)       1640 (   1.60kB)
+    Total ROM Size (Code + RO Data + RW Data)       1744 (   1.70kB)
 
 ==============================================================================
 
