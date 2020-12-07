@@ -6,11 +6,11 @@ switch_context PROC
 	
 	MOV sp, r0
 	PUSH {lr}	
-	PUSH {r4-r12}
+	PUSH {r0-r12}
 	STR sp, [r0]	
 	
 	MOV sp, r1
-	POP {r4-r12}
+	POP {r0-r12}
 	POP {pc}
     BX LR
 	ENDP

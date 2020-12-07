@@ -6,7 +6,6 @@
 typedef uint32_t pid_t;
 typedef uint32_t result_t;
 
-#define PROCESS_COUNT 3
 #define ADDRESS_LED_0 0x0100
 #define ADDRESS_LED_1 0x0200
 #define ADDRESS_LED_2 0x0400
@@ -16,6 +15,7 @@ typedef uint32_t result_t;
 #define ADDRESS_LED_6 0x4000
 #define ADDRESS_LED_7 0x8000
 #define LED_GROUP_SIZE 4
+#define PROCESS_COUNT 2
 
 uint32_t current_process = 0;
 uint32_t next_process = 0;
@@ -115,8 +115,6 @@ void controll_led_grp_1(){
 		
 		current_LED_grp_1++;
 		current_LED_grp_1 %= LED_GROUP_SIZE;
-
-		yield();
 	}
 }
 
@@ -143,8 +141,6 @@ void controll_led_grp_2(){
 		
 		current_LED_grp_2++;
 		current_LED_grp_2 %= LED_GROUP_SIZE;
-
-		yield();
 	}
 }
 
@@ -184,7 +180,7 @@ pid_t create(void (*p_function)(), int _remaining_runs){
 
 
 //array of all function pointers to all processes
-void (*tasklist[PROCESS_COUNT])() = {controll_led_grp_1, controll_led_grp_2, idle_task};
+void (*tasklist[PROCESS_COUNT])() = {controll_led_grp_1, controll_led_grp_2};
 
 
 /**
@@ -194,8 +190,8 @@ void (*tasklist[PROCESS_COUNT])() = {controll_led_grp_1, controll_led_grp_2, idl
 void register_all_processes(){
 	for (int currTask = 0; currTask < PROCESS_COUNT; currTask++){	
 		create(tasklist[currTask], -1);
-		process_table[currTask].p_stack_pointer = &stack[currTask][22];
-		*(process_table[currTask].p_stack_pointer + 9) = (uint32_t) process_table[currTask].task;
+		process_table[currTask].p_stack_pointer = &stack[currTask][18];
+		*(process_table[currTask].p_stack_pointer + 13) = (uint32_t) process_table[currTask].task;
 	}
 }
 
@@ -222,11 +218,30 @@ void HardFault_Handler(void){
 	}
 }
 
+void PendSV_Handler(void){
+	yield();
+}
+
+void SysTick_Handler(void){
+	SCB->ICSR = 0x10000000; //bit 28 PendSV set
+	//trigger PendSV Handler
+}
+
+
 int main(void){
 	init();
 	register_all_processes();
+	SysTick->CTRL = 7;
+	SysTick->LOAD = 120000;
 	first_context(process_table[0].p_stack_pointer);
 	while(1){
 			//should never be here
 	}
 }
+
+
+/* debug tools
+Peripherals -> Core Peripherals -> System Tick Timer
+Peripherals -> Core Peripherals -> Nested Vectored Interrupt Controller
+*/
+

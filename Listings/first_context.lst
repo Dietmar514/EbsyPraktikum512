@@ -14,7 +14,7 @@ ARM Macro Assembler    Page 1
     7 00000000         
     8 00000000                 EXPORT           first_context
     9 00000000 4685            MOV              sp, r0
-   10 00000002 E8BD 1FF0       POP              {r4-r12}
+   10 00000002 E8BD 1FFF       POP              {r0-r12}
    11 00000006         
    12 00000006 BD00            POP              {pc}
    13 00000008 4770            BX               LR
