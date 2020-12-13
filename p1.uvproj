@@ -461,6 +461,16 @@
               <FileType>2</FileType>
               <FilePath>.\delay.s</FilePath>
             </File>
+            <File>
+              <FileName>PendSV_Handler.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\dev_branch\EbsyPraktikum512\PendSV_Handler.h</FilePath>
+            </File>
+            <File>
+              <FileName>PendSV_Handler.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\..\dev_branch\EbsyPraktikum512\PendSV_Handler.s</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>

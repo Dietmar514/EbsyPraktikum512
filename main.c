@@ -27,6 +27,9 @@ uint8_t test_counter = 0;
 
 uint32_t stack[PROCESS_COUNT][32];
 
+uint32_t* curr;
+uint32_t* next;
+
 enum e_status{
 	running,
 	ready,
@@ -74,22 +77,6 @@ pid_t get_new_pid(){
 result_t destroy(pid_t _pid){
 		process_table[_pid].status = terminated;
 		return 0;
-}
-
-void yield(){
-	
-	current_process %= PROCESS_COUNT;
-	next_process = ((current_process + 1) % PROCESS_COUNT);
-	
-	while(process_table[next_process].status == terminated){
-		current_process++;
-		current_process %= PROCESS_COUNT;
-		next_process = ((current_process + 1) % PROCESS_COUNT);
-	}
-	switch_context(process_table[current_process++].p_stack_pointer, process_table[next_process].p_stack_pointer);
-	
-	
-	
 }
 
 
@@ -152,7 +139,6 @@ void idle_task(){
 		if(test_counter == 8){
 			destroy(0);
 		}
-		yield();
 	}
 }
 
@@ -218,11 +204,17 @@ void HardFault_Handler(void){
 	}
 }
 
-void PendSV_Handler(void){
-	yield();
-}
-
 void SysTick_Handler(void){
+	current_process %= PROCESS_COUNT;
+	next_process = ((current_process + 1) % PROCESS_COUNT);
+	
+	while(process_table[next_process].status == terminated){
+		current_process++;
+		current_process %= PROCESS_COUNT;
+		next_process = ((current_process + 1) % PROCESS_COUNT);
+	}
+	curr = (uint32_t* ) &process_table[current_process++];
+	next = (uint32_t* ) &process_table[next_process];
 	SCB->ICSR = 0x10000000; //bit 28 PendSV set
 	//trigger PendSV Handler
 }
