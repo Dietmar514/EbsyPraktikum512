@@ -21,20 +21,18 @@ ARM Macro Assembler    Page 1
    14 0000000C 6018            STR              R0, [R3]
    15 0000000E         
    16 0000000E 4804            LDR              R0, =next
-   17 00000010 6800            LDR              R0, [R0]
-   18 00000012 6801            LDR              R1, [R0]
-   19 00000014 F381 8809       MSR              PSP, R1
-   20 00000018 E930 0FF0       LDMDB            R0!, {R4-R11}
-   21 0000001C                 ENDP
-   22 0000001C                 END
-              00000000 
+   17 00000010 6801            LDR              R1, [R0]
+   18 00000012 F381 8809       MSR              PSP, R1
+   19 00000016 E8B0 0FF0       LDM              R0!, {R4-R11}
+   20 0000001A                 ENDP
+   21 0000001A                 END
+              00 00 00000000 
               00000000 
 Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M3 --apcs=interw
 ork --depend=.\objects\pendsv_handler.d -o.\objects\pendsv_handler.o -IC:\Keil_
 v5\ARM\RV31\INC -IC:\Keil_v5\ARM\CMSIS\Include -IC:\Keil_v5\ARM\INC\NXP\LPC177x
-_8x --predefine="__EVAL SETA 1" --predefine="__UVISION_VERSION SETA 529" --list
-=.\listings\pendsv_handler.lst ..\..\dev_branch\EbsyPraktikum512\PendSV_Handler
-.s
+_8x --predefine="__UVISION_VERSION SETA 529" --list=.\listings\pendsv_handler.l
+st PendSV_Handler.s
 
 
 
@@ -45,15 +43,15 @@ PendSV_Handler 00000000
 
 Symbol: PendSV_Handler
    Definitions
-      At line 6 in file ..\..\dev_branch\EbsyPraktikum512\PendSV_Handler.s
+      At line 6 in file PendSV_Handler.s
    Uses
-      At line 8 in file ..\..\dev_branch\EbsyPraktikum512\PendSV_Handler.s
+      At line 8 in file PendSV_Handler.s
 Comment: PendSV_Handler used once
 asmcode 00000000
 
 Symbol: asmcode
    Definitions
-      At line 1 in file ..\..\dev_branch\EbsyPraktikum512\PendSV_Handler.s
+      At line 1 in file PendSV_Handler.s
    Uses
       None
 Comment: asmcode unused
@@ -68,17 +66,17 @@ curr 00000000
 
 Symbol: curr
    Definitions
-      At line 3 in file ..\..\dev_branch\EbsyPraktikum512\PendSV_Handler.s
+      At line 3 in file PendSV_Handler.s
    Uses
-      At line 10 in file ..\..\dev_branch\EbsyPraktikum512\PendSV_Handler.s
+      At line 10 in file PendSV_Handler.s
 Comment: curr used once
 next 00000000
 
 Symbol: next
    Definitions
-      At line 4 in file ..\..\dev_branch\EbsyPraktikum512\PendSV_Handler.s
+      At line 4 in file PendSV_Handler.s
    Uses
-      At line 16 in file ..\..\dev_branch\EbsyPraktikum512\PendSV_Handler.s
+      At line 16 in file PendSV_Handler.s
 Comment: next used once
 2 symbols
-338 symbols in table
+337 symbols in table

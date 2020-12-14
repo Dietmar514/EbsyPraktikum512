@@ -27,7 +27,7 @@
 
 /*  - F u n c t i o n  P r o t o t y p e s                               */
 
-   void  PendSV_Handler(uint32_t* p_old_stack, uint32_t* p_new_stack);
+   void  PendSV_Handler();
 
 
 #endif  // _PENDSV_HANDLER_H

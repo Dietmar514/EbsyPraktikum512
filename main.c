@@ -50,6 +50,7 @@ struct s_process{
 extern void first_context(uint32_t* p_sp);
 extern void switch_context(uint32_t* p_old_stack, uint32_t* p_new_stack);
 extern void delayms(uint32_t delay);
+extern void PendSV_Hanlder(void);
 
 
 //array of all processes
@@ -213,8 +214,8 @@ void SysTick_Handler(void){
 		current_process %= PROCESS_COUNT;
 		next_process = ((current_process + 1) % PROCESS_COUNT);
 	}
-	curr = (uint32_t* ) &process_table[current_process++];
-	next = (uint32_t* ) &process_table[next_process];
+	curr = process_table[current_process++].p_stack_pointer;
+	next = process_table[next_process].p_stack_pointer;
 	SCB->ICSR = 0x10000000; //bit 28 PendSV set
 	//trigger PendSV Handler
 }
@@ -225,7 +226,7 @@ int main(void){
 	register_all_processes();
 	SysTick->CTRL = 7;
 	SysTick->LOAD = 120000;
-	first_context(process_table[0].p_stack_pointer);
+  first_context(process_table[0].p_stack_pointer);
 	while(1){
 			//should never be here
 	}

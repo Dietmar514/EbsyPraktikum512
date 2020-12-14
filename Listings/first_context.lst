@@ -10,21 +10,17 @@ ARM Macro Assembler    Page 1
                                PROC
     4 00000000         
     5 00000000         
-    6 00000000         
-    7 00000000         
-    8 00000000                 EXPORT           first_context
-    9 00000000 4685            MOV              sp, r0
-   10 00000002 E8BD 1FFF       POP              {r0-r12}
-   11 00000006         
-   12 00000006 BD00            POP              {pc}
-   13 00000008 4770            BX               LR
-   14 0000000A                 ENDP
-   15 0000000A                 END
+    6 00000000                 EXPORT           first_context
+    7 00000000 F380 8809       MSR              PSP, R0
+    8 00000004 E920 0FF0       STMDB            R0!, {R4-R11}
+    9 00000008 4770            BX               LR
+   10 0000000A                 ENDP
+   11 0000000A                 END
 Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M3 --apcs=interw
 ork --depend=.\objects\first_context.d -o.\objects\first_context.o -IC:\Keil_v5
 \ARM\RV31\INC -IC:\Keil_v5\ARM\CMSIS\Include -IC:\Keil_v5\ARM\INC\NXP\LPC177x_8
-x --predefine="__EVAL SETA 1" --predefine="__UVISION_VERSION SETA 529" --list=.
-\listings\first_context.lst first_context.s
+x --predefine="__UVISION_VERSION SETA 529" --list=.\listings\first_context.lst 
+first_context.s
 
 
 
@@ -45,7 +41,7 @@ Symbol: first_context
    Definitions
       At line 3 in file first_context.s
    Uses
-      At line 8 in file first_context.s
+      At line 6 in file first_context.s
 Comment: first_context used once
 2 symbols
-334 symbols in table
+333 symbols in table

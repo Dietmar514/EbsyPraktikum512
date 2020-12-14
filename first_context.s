@@ -3,13 +3,9 @@
 first_context PROC
 
 
-
-
 	EXPORT first_context
-	MOV sp, r0
-	POP {r0-r12}
-	
-	POP {pc}
+	MSR PSP, R0
+	STMDB R0!, {R4-R11}
 	BX LR
 	ENDP
 	END
