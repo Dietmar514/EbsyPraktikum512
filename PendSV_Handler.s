@@ -16,7 +16,9 @@ PendSV_Handler PROC
 	LDR R0, =next
 	LDR R1, [R0]
 	MSR PSP, R1
-	LDM R0!, {R4-R11}
+	LDMIA R0!, {R4-R11}
+	LDR R0, =0xFFFFFFFD
+    BX R0
 	ENDP
 	END
 	

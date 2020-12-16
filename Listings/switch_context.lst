@@ -25,8 +25,8 @@ ARM Macro Assembler    Page 1
 Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M3 --apcs=interw
 ork --depend=.\objects\switch_context.d -o.\objects\switch_context.o -IC:\Keil_
 v5\ARM\RV31\INC -IC:\Keil_v5\ARM\CMSIS\Include -IC:\Keil_v5\ARM\INC\NXP\LPC177x
-_8x --predefine="__UVISION_VERSION SETA 529" --list=.\listings\switch_context.l
-st switch_context.s
+_8x --predefine="__EVAL SETA 1" --predefine="__UVISION_VERSION SETA 529" --list
+=.\listings\switch_context.lst switch_context.s
 
 
 
@@ -50,4 +50,4 @@ Symbol: switch_context
       At line 5 in file switch_context.s
 Comment: switch_context used once
 2 symbols
-333 symbols in table
+334 symbols in table

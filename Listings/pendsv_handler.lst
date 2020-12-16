@@ -14,25 +14,27 @@ ARM Macro Assembler    Page 1
     7 00000000         
     8 00000000                 EXPORT           PendSV_Handler
     9 00000000         
-   10 00000000 4B06            LDR              R3, =curr
+   10 00000000 4B07            LDR              R3, =curr
    11 00000002 F3EF 8009       MRS              R0, PSP
    12 00000006 E920 0FF0       STMDB            R0!, {R4-R11}
    13 0000000A 681B            LDR              R3, [R3]
    14 0000000C 6018            STR              R0, [R3]
    15 0000000E         
-   16 0000000E 4804            LDR              R0, =next
+   16 0000000E 4805            LDR              R0, =next
    17 00000010 6801            LDR              R1, [R0]
    18 00000012 F381 8809       MSR              PSP, R1
-   19 00000016 E8B0 0FF0       LDM              R0!, {R4-R11}
-   20 0000001A                 ENDP
-   21 0000001A                 END
-              00 00 00000000 
+   19 00000016 E8B0 0FF0       LDMIA            R0!, {R4-R11}
+   20 0000001A F06F 0002       LDR              R0, =0xFFFFFFFD
+   21 0000001E 4700            BX               R0
+   22 00000020                 ENDP
+   23 00000020                 END
+              00000000 
               00000000 
 Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M3 --apcs=interw
 ork --depend=.\objects\pendsv_handler.d -o.\objects\pendsv_handler.o -IC:\Keil_
 v5\ARM\RV31\INC -IC:\Keil_v5\ARM\CMSIS\Include -IC:\Keil_v5\ARM\INC\NXP\LPC177x
-_8x --predefine="__UVISION_VERSION SETA 529" --list=.\listings\pendsv_handler.l
-st PendSV_Handler.s
+_8x --predefine="__EVAL SETA 1" --predefine="__UVISION_VERSION SETA 529" --list
+=.\listings\pendsv_handler.lst PendSV_Handler.s
 
 
 
@@ -79,4 +81,4 @@ Symbol: next
       At line 16 in file PendSV_Handler.s
 Comment: next used once
 2 symbols
-337 symbols in table
+338 symbols in table
