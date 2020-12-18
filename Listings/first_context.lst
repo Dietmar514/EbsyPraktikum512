@@ -12,10 +12,9 @@ ARM Macro Assembler    Page 1
     5 00000000         
     6 00000000                 EXPORT           first_context
     7 00000000 F380 8809       MSR              PSP, R0
-    8 00000004 E920 0FF0       STMDB            R0!, {R4-R11}
-    9 00000008 4770            BX               LR
-   10 0000000A                 ENDP
-   11 0000000A                 END
+    8 00000004 4770            BX               LR
+    9 00000006                 ENDP
+   10 00000006                 END
 Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M3 --apcs=interw
 ork --depend=.\objects\first_context.d -o.\objects\first_context.o -IC:\Keil_v5
 \ARM\RV31\INC -IC:\Keil_v5\ARM\CMSIS\Include -IC:\Keil_v5\ARM\INC\NXP\LPC177x_8

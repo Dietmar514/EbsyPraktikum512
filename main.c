@@ -177,8 +177,9 @@ void (*tasklist[PROCESS_COUNT])() = {controll_led_grp_1, controll_led_grp_2};
 void register_all_processes(){
 	for (int currTask = 0; currTask < PROCESS_COUNT; currTask++){	
 		create(tasklist[currTask], -1);
-		process_table[currTask].p_stack_pointer = &stack[currTask][18];
-		*(process_table[currTask].p_stack_pointer + 13) = (uint32_t) process_table[currTask].task;
+		process_table[currTask].p_stack_pointer = &stack[currTask][12];
+		*(process_table[currTask].p_stack_pointer + 6) = (uint32_t) process_table[currTask].task;
+		*(process_table[currTask].p_stack_pointer + 7) = 0x41000000;
 	}
 }
 
