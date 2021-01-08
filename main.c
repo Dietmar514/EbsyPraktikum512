@@ -15,13 +15,15 @@ typedef uint32_t result_t;
 #define ADDRESS_LED_6 0x4000
 #define ADDRESS_LED_7 0x8000
 #define LED_GROUP_SIZE 4
-#define PROCESS_COUNT 2
+#define INITIAL_PROCESS_COUNT 2
+#define PROCESS_COUNT 10
 
 uint32_t current_process = 0;
 uint32_t next_process = 0;
 pid_t global_pid = 0;
 uint8_t current_LED_grp_1 = 0;
 uint8_t current_LED_grp_2 = 0;
+uint8_t global_fork_counter = 0;
 
 uint8_t test_counter = 0;
 
@@ -51,7 +53,8 @@ extern void first_context(uint32_t* p_sp);
 extern void switch_context(uint32_t* p_old_stack, uint32_t* p_new_stack);
 extern void delayms(uint32_t delay);
 extern void PendSV_Hanlder(void);
-
+void SysTick_Handler(void);
+int fork(void);
 
 //array of all processes
 struct s_process process_table[PROCESS_COUNT];
@@ -100,7 +103,6 @@ void controll_led_grp_1(){
 			default:LPC_GPIO0->SET = 0xFFFFFFFF;
 					break;
 		}
-		
 		current_LED_grp_1++;
 		current_LED_grp_1 %= LED_GROUP_SIZE;
 	}
@@ -108,6 +110,8 @@ void controll_led_grp_1(){
 
 void controll_led_grp_2(){
 	
+		fork();
+
 	while(1){
 
 		LPC_GPIO0->CLR = ADDRESS_LED_4 | ADDRESS_LED_5 | ADDRESS_LED_6 | ADDRESS_LED_7;
@@ -126,7 +130,8 @@ void controll_led_grp_2(){
 			default:LPC_GPIO0->SET = 0xFFFFFFFF;
 					break;
 		}
-		
+
+
 		current_LED_grp_2++;
 		current_LED_grp_2 %= LED_GROUP_SIZE;
 	}
@@ -154,7 +159,12 @@ pid_t create(void (*p_function)(), int _remaining_runs){
 	struct s_process new_process;
 	new_pid %= PROCESS_COUNT;
 	new_process.pid = new_pid % PROCESS_COUNT;
-	new_process.status = ready;
+	if(p_function){
+		new_process.status = ready;	
+	}
+	else{
+		new_process.status = terminated;
+	}	
 	new_process.task = p_function;
 	//-1 to run all processes for ever
 	new_process.remaining_runs = _remaining_runs;
@@ -167,7 +177,7 @@ pid_t create(void (*p_function)(), int _remaining_runs){
 
 
 //array of all function pointers to all processes
-void (*tasklist[PROCESS_COUNT])() = {controll_led_grp_1, controll_led_grp_2};
+void (*tasklist[INITIAL_PROCESS_COUNT])() = {controll_led_grp_1, controll_led_grp_2};
 
 
 /**
@@ -175,16 +185,21 @@ void (*tasklist[PROCESS_COUNT])() = {controll_led_grp_1, controll_led_grp_2};
  * 
  */
 void register_all_processes(){
-	for (int currTask = 0; currTask < PROCESS_COUNT; currTask++){	
-		create(tasklist[currTask], -1);
-		process_table[currTask].p_stack_pointer = &stack[currTask][12];
-		*(process_table[currTask].p_stack_pointer + 6) = (uint32_t) process_table[currTask].task;
-		*(process_table[currTask].p_stack_pointer + 7) = 0x41000000;
+	for (int currTask = 0; currTask < PROCESS_COUNT; currTask++){				
+		if(currTask <= INITIAL_PROCESS_COUNT){
+			create(tasklist[currTask], -1);
+			process_table[currTask].p_stack_pointer = &stack[currTask][12];
+			*(process_table[currTask].p_stack_pointer + 6) = (uint32_t) process_table[currTask].task;
+			*(process_table[currTask].p_stack_pointer + 7) = 0x1000000; //set T bit
+		}
+		else{
+			create(0, -1);
+			process_table[currTask].p_stack_pointer = &stack[currTask][12];		
+		}
+		
 	}
 }
 
-
-	
 	
 /**
  * @brief call the function of all processes which are in the process table
@@ -219,6 +234,29 @@ void SysTick_Handler(void){
 	next = process_table[next_process].p_stack_pointer;
 	SCB->ICSR = 0x10000000; //bit 28 PendSV set
 	//trigger PendSV Handler
+}
+
+int fork(){
+	if(global_fork_counter == 0){
+		global_fork_counter++;
+	}
+	else{
+		return 1;
+	}
+	int termindex = -1;
+	for(int i = 0; i < PROCESS_COUNT  && termindex == -1; i++){
+		if(process_table[i].status == terminated){
+			termindex = i;
+		}
+	}
+	if(termindex != -1){
+		for(int i = 0; i < 32; i++){
+			stack[termindex][i] = stack[current_process][i];
+		}
+		process_table[termindex].status = ready;
+		return 0;
+	}
+	return 1;
 }
 
 
